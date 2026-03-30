@@ -1,4 +1,27 @@
 #!/usr/bin/env bash
+# publish.sh — Upload finished show to PlayoutONE and schedule via SQL
+#
+# Part of the WPFQ Morning Show pipeline (step 8 of 8, final).
+# Transfers hour MP3s to the station server and updates the Playlists
+# database to schedule them for broadcast.
+#
+# Transfer method:
+#   SCP → C:\temp on station, then PowerShell copy to F:\PlayoutONE\Audio\
+#   (SMB auth from SuperServer fails; SCP is the reliable path)
+#
+# SQL strategy (repurpose existing rows):
+#   - Find existing Playlists rows for target hours
+#   - UPDATE one row per hour with new audio UID + metadata
+#   - DELETE remaining rows in that hour (preserving Type=0/17/26 markers)
+#   - NEVER modify currently-playing or recently-loaded entries
+#   - GIndex format: YYYYMMDDHH.NNNN (primary key, soft-deleted rows hold theirs)
+#   - SET QUOTED_IDENTIFIER ON required for PlayoutONE SQL Server
+#
+# Input:  audio/MORNING-SHOW-H{N}.mp3
+# Output: Files on station + SQL schedule entries
+#
+# Called by: build-show.sh --step publish
+# Depends on: ssh, scp, sqlcmd (on station)
 set -euo pipefail
 
 # --- Colors ---

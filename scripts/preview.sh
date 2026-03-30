@@ -1,4 +1,22 @@
 #!/usr/bin/env bash
+# preview.sh — Compress morning show hour blocks to 128kbps for Telegram preview
+#
+# Part of the WPFQ Morning Show pipeline (step 7 of 8).
+# Takes full-quality hour MP3s (192kbps, ~50-70MB each) and compresses
+# them to 128kbps review copies under 50MB (Telegram file size limit).
+#
+# Input:  MORNING-SHOW-H{N}.mp3 or FULL-HOUR{N}-COMPLETE.mp3
+# Output: {BASENAME}-REVIEW.mp3 in same directory
+#
+# The script auto-detects hour numbers from filenames (H5=5AM, H6=6AM, etc.)
+# so it works with any hour numbering scheme, not just H1-H4.
+#
+# Usage:
+#   preview.sh --audio-dir shows/2026-03-31/audio/          # dry run
+#   preview.sh --audio-dir shows/2026-03-31/audio/ --send    # send via Telegram
+#
+# Called by: build-show.sh --step preview
+# Depends on: ffmpeg, ffprobe, openclaw CLI (for --send)
 set -euo pipefail
 
 # --- Colors ---

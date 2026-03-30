@@ -1,4 +1,18 @@
 #!/usr/bin/env bash
+# write-scripts.sh — Generate talk segment scripts via Claude Code CLI
+#
+# Part of the WPFQ Morning Show pipeline (step 3 of 8).
+# Uses an LLM to write Johnny Fever-style talk segments for each hour,
+# incorporating research data (weather, history, birthdays) and the
+# day template (recurring features like Deep Cut Tuesday, Guitar God Spotlight).
+#
+# Segments are written as markdown with [SONG:Artist - Title] markers
+# between talk blocks so downstream steps know where to interleave music.
+#
+# Output: scripts/hour-{N}.md per hour
+#
+# Called by: build-show.sh --step write
+# Depends on: claude CLI (Anthropic)
 set -euo pipefail
 
 # --- Colors ---

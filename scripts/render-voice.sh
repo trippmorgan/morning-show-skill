@@ -1,4 +1,22 @@
 #!/usr/bin/env bash
+# render-voice.sh — Convert talk segment scripts to audio via ElevenLabs TTS
+#
+# Part of the WPFQ Morning Show pipeline (step 4 of 8).
+# Takes markdown script files containing talk segments and renders each
+# to MP3 using the Dr. Johnny Fever voice clone on ElevenLabs.
+#
+# Voice settings (from config.yaml):
+#   - Voice ID: ZnX1f6YZpySUHtk0RDLM
+#   - Stability: 0.5, Similarity: 0.85, Style: 0.35
+#   - Model: eleven_multilingual_v2
+#
+# Input:  scripts/hour-{N}.md (with [SONG:...] markers between talk blocks)
+# Output: voice/h{N}-seg{M}.mp3 per talk segment
+#
+# API key sourced from Voldemort (~/.env) or $ELEVENLABS_API_KEY env var.
+#
+# Called by: build-show.sh --step render
+# Depends on: curl, jq, ElevenLabs API
 set -euo pipefail
 
 # --- Colors ---
