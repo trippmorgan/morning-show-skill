@@ -1,0 +1,42 @@
+[2026-03-27T17:53:32-04:00] === DJ Pretoria Morning Show Generator ===
+[2026-03-27T17:53:32-04:00] Date: 2026-03-27 | Shadow: true
+[2026-03-27T17:53:32-04:00] Step 1: Gathering content...
+[2026-03-27T17:55:03-04:00] === DJ Pretoria Morning Show Generator ===
+[2026-03-27T17:55:03-04:00] Date: 2026-03-27 | Shadow: true
+[2026-03-27T17:55:03-04:00] Step 1: Gathering content...
+[2026-03-27T17:55:13-04:00] Weather: Weather unavailable
+[2026-03-27T17:55:13-04:00] Content bundle saved.
+[2026-03-27T17:55:13-04:00] Step 2: Generating hour scripts...
+[2026-03-27T17:55:13-04:00]   Generating script for hour 05 (low_grumbly)...
+[2026-03-27T17:55:13-04:00]   Script prompt saved: hour-05-prompt.md
+[2026-03-27T17:55:13-04:00]   Generating script for hour 06 (warming_up)...
+[2026-03-27T17:55:13-04:00]   Script prompt saved: hour-06-prompt.md
+[2026-03-27T17:55:13-04:00]   Generating script for hour 07 (peak_energy)...
+[2026-03-27T17:55:13-04:00]   Script prompt saved: hour-07-prompt.md
+[2026-03-27T17:55:13-04:00]   Generating script for hour 08 (cruising)...
+[2026-03-27T17:55:13-04:00]   Script prompt saved: hour-08-prompt.md
+[2026-03-27T17:55:13-04:00]   Generating script for hour 09 (winding_down)...
+[2026-03-27T17:55:13-04:00]   Script prompt saved: hour-09-prompt.md
+[2026-03-27T17:55:13-04:00] Step 3: Selecting WKRP clips...
+[2026-03-27T17:55:13-04:00] WKRP clip manifest saved.
+[2026-03-27T17:55:13-04:00] Step 4: TTS rendering...
+[2026-03-27T17:55:13-04:00]   STATUS: PENDING — requires ElevenLabs API key and voice ID
+[2026-03-27T17:55:13-04:00]   When ready: render each script segment → /home/tripp/.openclaw/workspace/PretoriaFields/morning-show/output/2026-03-27/audio/
+[2026-03-27T17:55:13-04:00] Step 5: Audio assembly...
+[2026-03-27T17:55:13-04:00]   STATUS: PENDING — requires Step 3 (clips) + Step 4 (TTS)
+[2026-03-27T17:55:13-04:00] Step 6: SHADOW MODE — skipping PlayoutONE injection
+[2026-03-27T17:55:13-04:00]   Scripts generated for review at: /home/tripp/.openclaw/workspace/PretoriaFields/morning-show/output/2026-03-27/scripts/
+[2026-03-27T17:55:13-04:00] 
+[2026-03-27T17:55:13-04:00] === Generation Complete ===
+[2026-03-27T17:55:13-04:00] Output: /home/tripp/.openclaw/workspace/PretoriaFields/morning-show/output/2026-03-27/
+[2026-03-27T17:55:13-04:00] Scripts: /home/tripp/.openclaw/workspace/PretoriaFields/morning-show/output/2026-03-27/scripts/ (5 hour prompts)
+[2026-03-27T17:55:13-04:00] Audio: /home/tripp/.openclaw/workspace/PretoriaFields/morning-show/output/2026-03-27/audio/ (pending TTS)
+[2026-03-27T17:55:13-04:00] WKRP: /home/tripp/.openclaw/workspace/PretoriaFields/morning-show/output/2026-03-27/wkrp-clips.json (pending extraction)
+[2026-03-27T17:55:13-04:00] 
+[2026-03-27T17:55:13-04:00] Pipeline Status:
+[2026-03-27T17:55:13-04:00]   ✅ Content gathering (weather, date)
+[2026-03-27T17:55:13-04:00]   ✅ Script prompts generated
+[2026-03-27T17:55:13-04:00]   ⏳ WKRP clip extraction (needs demucs on Voldemort)
+[2026-03-27T17:55:13-04:00]   ⏳ TTS rendering (needs ElevenLabs API key)
+[2026-03-27T17:55:13-04:00]   ⏳ Audio assembly
+[2026-03-27T17:55:13-04:00]   ⏳ PlayoutONE injection (needs GptScript integration)

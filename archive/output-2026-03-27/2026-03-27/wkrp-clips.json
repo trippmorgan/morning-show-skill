@@ -1,0 +1,12 @@
+{
+  "note": "WKRP clip selections for today's show — max 4 per hour, no repeats within 3 days",
+  "clips_needed": {
+    "bumpers": 5,
+    "transitions": 5,
+    "kickers": 5,
+    "closes": 1,
+    "easter_eggs": 2
+  },
+  "source_dir": "/home/joevoldemort/pretoria-captions/voice-reference/johnny-fever/",
+  "status": "PENDING — requires clip extraction pipeline (demucs + silence detection)"
+}

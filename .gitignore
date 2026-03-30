@@ -1,3 +1,10 @@
+# Large audio files — don't track in git
 shows/*/audio/*.mp3
 shows/*/segments/*.mp3
+shows/*/songs/*.mp3
+shows/*/voice/*.mp3
 shows/*/segments/concat-*.txt
+shows/*/concat-*.txt
+archive/**/*.mp3
+
+# Keep scripts, manifests, research JSON (small text files)
