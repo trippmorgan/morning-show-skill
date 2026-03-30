@@ -101,14 +101,16 @@ if [[ "$MODE" != "search" && -z "$OUTPUT_DIR" ]]; then
 fi
 
 # --- helpers ---
+trim() { local s="$*"; s="${s#"${s%%[![:space:]]*}"}"; s="${s%"${s##*[![:space:]]}"}"; echo "$s"; }
 
 # Run a SQL query on the remote PlayoutONE server.
 # Writes SQL to a temp file on the Windows box to avoid shell-escaping issues.
 run_sql() {
   local sql="$1"
-  # Escape double quotes in the SQL for the echo command
-  local escaped_sql="${sql//\"/\\\"}"
-  ssh "$SSH_HOST" "echo ${escaped_sql} > ${REMOTE_QUERY_FILE} && sqlcmd -S localhost -d ${DB} -E -W -h -1 -s \"|\" -i ${REMOTE_QUERY_FILE}"
+  echo "$sql" > "/tmp/query_$$.sql"
+  scp -q "/tmp/query_$$.sql" "$SSH_HOST:C:/temp/query.sql"
+  ssh "$SSH_HOST" "sqlcmd -S localhost -d $DB -E -W -h -1 -s \"|\" -i C:\\temp\\query.sql"
+  rm -f "/tmp/query_$$.sql"
 }
 
 # Get duration in ms via ffprobe (returns empty string if unavailable)
@@ -176,10 +178,10 @@ do_search() {
 
   while IFS='|' read -r uid title artist filename; do
     # Trim whitespace
-    uid=$(echo "$uid" | xargs)
-    title=$(echo "$title" | xargs)
-    artist=$(echo "$artist" | xargs)
-    filename=$(echo "$filename" | xargs)
+    uid=$(trim "$uid")
+    title=$(trim "$title")
+    artist=$(trim "$artist")
+    filename=$(trim "$filename")
     [[ -z "$uid" ]] && continue
     printf "%-8s %-30s %-30s %-40s\n" "$uid" "$artist" "$title" "$filename" >&2
   done <<< "$results"
@@ -194,7 +196,7 @@ do_uids() {
   IFS=',' read -ra uid_arr <<< "$uid_csv"
   local uid_list=""
   for u in "${uid_arr[@]}"; do
-    u=$(echo "$u" | xargs)
+    u=$(trim "$u")
     [[ -n "$uid_list" ]] && uid_list="${uid_list},"
     uid_list="${uid_list}${u}"
   done
@@ -213,10 +215,10 @@ do_uids() {
   local first=true
 
   while IFS='|' read -r uid title artist filename; do
-    uid=$(echo "$uid" | xargs)
-    title=$(echo "$title" | xargs)
-    artist=$(echo "$artist" | xargs)
-    filename=$(echo "$filename" | xargs)
+    uid=$(trim "$uid")
+    title=$(trim "$title")
+    artist=$(trim "$artist")
+    filename=$(trim "$filename")
     [[ -z "$uid" ]] && continue
 
     log "Downloading UID ${uid}: ${artist} - ${title}"
@@ -258,37 +260,39 @@ do_songs() {
 
   IFS=',' read -ra song_arr <<< "$songs_csv"
   for entry in "${song_arr[@]}"; do
-    entry=$(echo "$entry" | xargs)
+    entry=$(trim "$entry")
     # Split on " - "
     local artist="${entry%% - *}"
     local title="${entry#* - }"
-    artist=$(echo "$artist" | xargs)
-    title=$(echo "$title" | xargs)
+    artist=$(trim "$artist")
+    title=$(trim "$title")
 
     if [[ -z "$artist" || -z "$title" ]]; then
       warn "Skipping malformed entry: '${entry}'"
       continue
     fi
 
+    local artist_esc="${artist//\'/\'\'}"
+    local title_esc="${title//\'/\'\'}"
+
     log "Searching: ${artist} - ${title}"
-    local sql="SELECT TOP 1 UID, Title, Artist, Filename FROM Audio WHERE Artist LIKE ''%${artist}%'' AND Title LIKE ''%${title}%''"
+    local sql="SET NOCOUNT ON; SELECT TOP 1 UID, Title, Artist, Filename FROM Audio WHERE Artist LIKE '%${artist_esc}%' AND Title LIKE '%${title_esc}%'"
     local result
-    result=$(run_sql "$sql") || { warn "SQL failed for: ${artist} - ${title}"; continue; }
+    result=$(run_sql "$sql" | grep "|" | head -1 || true)
 
     if [[ -z "$result" ]]; then
       warn "No match for: ${artist} - ${title}"
       continue
     fi
 
-    # Take first line of results
-    local line
-    line=$(echo "$result" | head -1)
     local uid title_db artist_db filename
-    IFS='|' read -r uid title_db artist_db filename <<< "$line"
-    uid=$(echo "$uid" | xargs)
-    title_db=$(echo "$title_db" | xargs)
-    artist_db=$(echo "$artist_db" | xargs)
-    filename=$(echo "$filename" | xargs)
+    IFS='|' read -r uid title_db artist_db filename <<< "$result"
+    
+    # Strip whitespace without xargs (avoids quote errors)
+    uid="${uid#"${uid%%[![:space:]]*}"}"; uid="${uid%"${uid##*[![:space:]]}"}"
+    title_db="${title_db#"${title_db%%[![:space:]]*}"}"; title_db="${title_db%"${title_db##*[![:space:]]}"}"
+    artist_db="${artist_db#"${artist_db%%[![:space:]]*}"}"; artist_db="${artist_db%"${artist_db##*[![:space:]]}"}"
+    filename="${filename#"${filename%%[![:space:]]*}"}"; filename="${filename%"${filename##*[![:space:]]}"}"
 
     ok "Found UID ${uid}: ${artist_db} - ${title_db}"
     local local_path

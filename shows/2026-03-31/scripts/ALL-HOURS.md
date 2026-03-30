@@ -15,55 +15,92 @@
 
 ### SEGMENT 1: OPEN
 
-Good morning Albany. And I use that term loosely. It is Tuesday. March thirty-first. Five in the morning on WPFQ ninety-six point seven, Pretoria Fields Radio. Tuesday. The day that nobody writes songs about. Monday gets all the hate. Wednesday gets the hump. Friday gets the party. And Tuesday just sits there like the middle child at Thanksgiving wondering if anyone noticed it showed up.
+Good morning Albany. And I use that term loosely. It is Tuesday. March thirty-first. Five AM on WPFQ ninety-six point seven, Pretoria Fields Radio. Tuesday. The day nobody writes songs about. Monday gets the hate. Wednesday gets the hump. Friday gets the celebration. And Tuesday just sits there like the middle child at dinner hoping somebody passes the rolls its way.
 
-I am one cup of coffee in and it is not doing its job yet. Outside it is about sixty-one degrees. Overcast. Like even the sky could not commit to doing anything today. We are looking at a high of eighty-two later. Eighty-two in March. Georgia is just skipping spring this year apparently. Going straight from kind of warm to why did I move here.
+I am one cup of coffee in and it has not kicked yet. Outside it is about sixty-one degrees. Overcast. The sky looks like it cannot decide what it wants to do today. Join the club. We are looking at a high of eighty-two. Eighty-two degrees on the last day of March. Georgia has apparently decided spring is optional this year. Just going to skip right ahead to summer. Fine. Whatever.
 
-This hour we have got some incredible music history. Jimi Hendrix literally setting his guitar on fire. Chuck Berry inventing the rock and roll origin story. A few things I need to complain about. And enough songs to justify the fact that I am vertical at this hour. Let us get into it.
-
----
-
-### SEGMENT 2: THIS DAY IN MUSIC HISTORY
-
-On this day. March thirty-first. Let me tell you what happened on this date because it is one of those days where the music gods were showing off.
-
-Nineteen sixty-seven. Jimi Hendrix is onstage at the Astoria Theatre in London. And he sets his Fender Stratocaster on fire. On stage. In front of people. First time he ever did it. Now think about that. You are in a theater in London and a man just lights his guitar on fire and keeps playing. There was no precedent for this. Nobody had a plan for this. He would do it again later that year at Monterey Pop and that is the version everyone remembers. But London was first. And somewhere in that audience somebody is watching and thinking I just came to hear some guitar and this man is performing an act of arson. Hendrix did not just play the guitar. He had a relationship with it. And sometimes that relationship got heated. Literally.
-
-Also on this day. Nineteen fifty-eight. Chuck Berry released Johnny B. Goode. Ranked number seven on Rolling Stone's five hundred greatest songs of all time. And here is what makes it special. It is the first great rock and roll song about becoming a rock and roll star. Before that song nobody had written the myth yet. Chuck Berry wrote the blueprint. Every guitar hero origin story after that? They are all footnotes to Johnny B. Goode. The song is on the Voyager Golden Record by the way. It is literally floating through space right now representing humanity. That is not a bad legacy.
-
-And in nineteen forty-nine on this day RCA Victor introduced the forty-five RPM single. The seven-inch record. That little disc with the big hole in the middle that changed how the entire world bought music. Before that you had to buy these big fragile seventy-eight RPM records. The forty-five made music portable. Affordable. Collectible. Jukeboxes ran on forty-fives. Every kid who ever saved up allowance money to buy a single at a record store? That started right here. March thirty-first, nineteen forty-nine. The music industry has been chasing the next format ever since. Vinyl. Eight-track. Cassette. CD. MP3. Streaming. But the forty-five started the revolution. Speaking of revolutions per minute...
+This hour we have got some real music history. Hendrix setting a guitar on fire. Chuck Berry writing the blueprint. A rant about something that has been bothering me. And enough blues rock to justify being conscious at this hour. Let us give Tuesday the respect it never gets.
 
 ---
 
-### SEGMENT 3: THE RANT — Why Does Voicemail Still Exist
+### SEGMENT 2: WEATHER
 
-Can we talk about voicemail for a minute. Why does it still exist. I am genuinely asking. It is twenty twenty-six. We have cars that drive themselves. We have refrigerators that order groceries. And yet somehow voicemail is still here. Clinging to existence like that one guy at the party who will not leave.
+Right now in Albany it is about sixty-one degrees. Overcast. Which sounds moody and I respect that. High today around eighty-two. Low tonight back down near sixty-one. Eighteen percent chance of rain. Which in Georgia means it will either not rain at all or it will pour for seven minutes and then pretend nothing happened. Humidity is already creeping up because it is late March and Georgia does not believe in dry air. Dress light. Carry hope. Let us get to some music.
 
-Here is what happens. My phone rings. I do not answer because nobody answers their phone anymore. That is just a fact. The phone is now a device we use for everything except talking on the phone. So it rings. I ignore it. And then I get the notification. New voicemail. One minute and thirty-seven seconds long. And now I have to sit there. And listen. To a person. Talking at half speed. Saying the same information they could have sent in a text in four seconds. Hey it is uh Dave. From. Uh. The place. Give me a call back when you get a chance. My number is. And then they read their phone number at a pace that suggests they think I am chiseling it into stone.
-
-Just text me. Send an email. Send a carrier pigeon. Literally any other form of communication that does not require me to hold my phone to my ear and listen to somebody breathe into a microphone for ninety seconds. I have been leaving voicemails since the answering machine era and even then I thought it was weird that I was just talking into a void hoping someone would care later.
-
-But I will tell you the worst part. The worst part is when it says to delete this message press seven. To save it press nine. To hear more options press star. I do not want more options. I want those ninety seconds of my life back. Anyway. That is my position on voicemail. It should be in a museum next to the fax machine. Here is some music.
+[SONG: Stevie Ray Vaughan - Pride and Joy]
+[SONG: Cream - White Room]
+[SONG: The Allman Brothers Band - Whipping Post]
 
 ---
 
-### SEGMENT 4: QUICK HITS
+### SEGMENT 3: THIS DAY IN MUSIC HISTORY
+
+On this day. March thirty-first. Some things happened that changed music permanently.
+
+Nineteen sixty-seven. Jimi Hendrix is onstage at the Astoria Theatre in London. And for the first time ever he sets his guitar on fire. On stage. In front of actual human beings who paid money to see a concert and instead witnessed an act of arson. He would do it again at Monterey Pop later that year and that is the one everybody remembers. But London was first. Somewhere in that audience a person is watching a man destroy a perfectly good Stratocaster and thinking I just wanted to hear some guitar. Hendrix did not play guitar. He had a relationship with it. And sometimes relationships get heated. Literally.
+
+Also on this day in nineteen fifty-eight. Chuck Berry released Johnny B. Goode. The first great rock and roll song about becoming a rock and roll star. Before that nobody had written the myth. Berry wrote the whole blueprint. Every guitar hero dream after that is a footnote to Johnny B. Goode. That song is on the Voyager Golden Record by the way. Floating through space right now representing humanity. Of all the things we could have sent. We sent Chuck Berry. Good call.
+
+And in nineteen forty-nine RCA Victor introduced the forty-five RPM single. The seven-inch record with the big hole in the middle. That little disc changed how the world consumed music. Jukeboxes. Record shops. Allowance money spent on singles. The music industry has been chasing the next format ever since. Vinyl. Eight-track. Cassette. CD. Streaming. But the forty-five started it all. Speaking of things that hold up...
+
+[SONG: Jimi Hendrix - Purple Haze]
+[SONG: Chuck Berry - Johnny B. Goode]
+[SONG: Creedence Clearwater Revival - Fortunate Son]
+
+---
+
+### SEGMENT 4: THE RANT — The Lie of the Snooze Button
+
+Can we talk about the snooze button for a minute. Specifically how it is the biggest con in the history of technology.
+
+Someone invented the alarm clock and thought okay this will wake people up. And then someone else looked at it and said what if we added a button that lets you not wake up. What if we built failure right into the machine. And everybody agreed. And here we are.
+
+Here is how it works. Your alarm goes off at four thirty. And your half-asleep brain, which has the decision-making ability of a golden retriever at a buffet, reaches over and hits snooze. Nine minutes. You get nine minutes. Not ten. Not five. Nine. Who decided nine minutes was the magic number. What study was conducted. Was there a committee. Did they try eleven and think no that is too luxurious.
+
+And those nine minutes. They are not real sleep. You are not resting. You are lying there in a state of anxious half-consciousness knowing that in nine minutes that alarm is coming back. It is like waiting for a jump scare in a movie except the movie is your life and it happens every single morning.
+
+I hit snooze three times today. That is twenty-seven minutes of pretending I was asleep while actually just dreading being awake. I could have set my alarm for twenty-seven minutes later and gotten real sleep. But no. I have to do the little dance. Alarm. Snooze. Alarm. Snooze. Alarm. Fine. I am a grown man negotiating with a clock. This is my life. Anyway. Here is some music for anyone else who lost that negotiation this morning.
+
+[SONG: ZZ Top - La Grange]
+[SONG: The Black Keys - Lonely Boy]
+[SONG: Gary Clark Jr. - Bright Lights]
+
+---
+
+### SEGMENT 5: QUICK HITS
 
 Quick hits. Here is what is happening in the world while we were all trying to ignore it.
 
-The Final Four is set. March Madness delivered this weekend. Arizona. Michigan. Illinois. And UConn who came back from nineteen points down to beat Duke on a thirty-five foot three-pointer at the buzzer. If your bracket is still alive at this point you are either a statistician or a liar. Probably both.
+The Final Four is set. March Madness delivered. If your bracket survived the weekend you are either a genius or you picked based on team colors and got lucky. Either way, Saturday is going to be something.
 
-MLB Opening Day is this Thursday, folks. Baseball is back. Which means it is officially acceptable to care about batting averages and pretend you understand the infield fly rule again.
+MLB Opening Day is Thursday. Baseball is back which means it is officially acceptable to spend three hours watching people stand around and call it sport. I love it. I genuinely love it. The Braves are back and southwest Georgia can stop pretending to care about whatever else was on.
 
-Down here in Albany the Dougherty County Summer Empowerment and Internship Program is taking applications. Paid internships for local students in county government. If you have a kid or know a kid, that is real opportunity. Check with Dougherty County for the details.
+The Masters is next week. Augusta is about three hours up the road and if you have never driven over there for practice rounds you are missing one of the great experiences in sports. The azaleas alone are worth the trip. The pimento cheese sandwiches are worth the drive.
 
-And finally. Happy birthday to the forty-five RPM single which turns seventy-seven today. That little record outlasted eight-tracks, cassettes, and my last three phones. Respect your elders. Speaking of respect. Here is a song that deserves some.
+Down here in Albany the Flint River cleanup volunteer day is coming up this Saturday. Good people. Good cause. Show up if you can. This river is ours and it deserves better than what it gets sometimes.
+
+And finally. Happy seventy-seventh birthday to the forty-five RPM single. That little record outlasted eight-tracks, cassettes, mini-discs, and my patience. Respect your elders. Here is a song that deserves some.
+
+[SONG: Tom Petty and the Heartbreakers - Runnin Down a Dream]
+[SONG: Foghat - Slow Ride]
 
 ---
 
-### SEGMENT 5: CLOSE
+### SEGMENT 6: PROMOS
 
-That is hour one. We are alive. Both of us. I am on cup number two now so things should theoretically improve from here. Coming up next hour we are digging into a deep cut that never got the radio play it deserved. We have got some birthdays to celebrate including a certain guitar player who has been duck-walking across stages for over fifty years. And more music. Always more music. WPFQ ninety-six point seven. Pretoria Fields Radio. Albany Georgia. Stay right there.
+Before I forget. Tomorrow night. Grunge Wednesday on WPFQ ninety-six point seven. Tripp takes over at five PM. Three hours of Seattle. Flannel optional but strongly encouraged. Pearl Jam. Soundgarden. Alice in Chains. The whole catalog. I give Tripp a hard time but his taste in music is solid. I will deny saying that in public.
+
+And Sundays. Throwback Country with Todd Fox. Four thirty to eight. Real country. The kind where the steel guitar actually means something and the trucks are not just props. If your boots have mud on them you are pre-approved.
+
+You are on Pretoria Fields Radio. WPFQ ninety-six point seven. Albany Georgia.
+
+[SONG: Led Zeppelin - Since I've Been Loving You]
+
+---
+
+### SEGMENT 7: CLOSE
+
+That is hour one. We survived it. Both of us. I have had enough coffee to form complete sentences now so things should theoretically improve. Coming up next hour we are digging into a deep cut that never got the radio play it earned. We have got some birthdays including a man who has been wearing schoolboy shorts on stage for fifty years. And more music. Always more music. WPFQ ninety-six point seven. Pretoria Fields Radio. Albany Georgia. Stay right there.
 
 ---
 
@@ -81,65 +118,91 @@ That is hour one. We are alive. Both of us. I am on cup number two now so things
 
 ### SEGMENT 1: OPEN
 
-Six AM. Tuesday morning on the Fields. WPFQ ninety-six point seven. Pretoria Fields Radio. The coffee is working and I am starting to remember how sentences function.
+Six AM. Tuesday morning on the Fields. WPFQ ninety-six point seven. Pretoria Fields Radio. The coffee is working. I am starting to resemble a functioning person.
 
-Weather check. Still overcast out there. Sixty-one degrees right now. Headed up to eighty-two today with about an eighteen percent chance of rain. Which in Georgia means it will either not rain at all or it will rain sideways for eleven minutes and then be sunny again. There is no in between. This is not Seattle weather. This is Georgia weather. It does what it wants.
+Weather check. Still overcast out there. About sixty-three degrees now and climbing toward eighty-two. Eighteen percent chance of rain which in Georgia means it either will not rain at all or the sky will open up for nine minutes and then act like nothing happened. You know the drill. It is warm for March. It is Georgia. Those two things are the same sentence.
 
-This hour we are finding the pocket. That is what Tuesday is about. Monday you fight it. Tuesday you settle in. We have got a deep cut coming up that deserves your ears. Some birthdays including one that involves schoolboy shorts and a Gibson SG. And I have another thing I need to get off my chest. But first. Music.
+This hour we are finding the pocket. That is what Tuesday is about. Monday you fight it. Tuesday you settle into it. We have got a deep cut coming up that deserves your attention. Some birthdays. And I have another thing I need to talk about. But first. Let the guitars wake you up.
+
+[SONG: Peter Green's Fleetwood Mac - Albatross]
+[SONG: Derek and the Dominos - Layla]
 
 ---
 
 ### SEGMENT 2: DEEP CUT TUESDAY — "Tea for One" by Led Zeppelin
 
-Alright. Deep Cut Tuesday. This is where I pull out a song that never got the radio play it deserved and tell you why you should care.
+Deep Cut Tuesday. This is where I pull out a track that never got the love it deserved and make my case.
 
-Today I am going with Led Zeppelin. Tea for One. Off the Presence album from nineteen seventy-six. Now most people know Presence as the album with Achilles Last Stand on it. Which is a monster track. But flip that record over and near the end of side two you get Tea for One. And it is Robert Plant at his most raw and Jimmy Page playing blues guitar like his life depends on it.
+Today it is Led Zeppelin. Tea for One. Off the Presence album. Nineteen seventy-six. Now most people know Presence as the album with Achilles Last Stand on it. Massive track. But flip the record over and near the end of side two you get Tea for One. And it is something else entirely.
 
-Here is the story. The band recorded Presence while Plant was still recovering from a car accident in Rhodes. He was in a wheelchair. He could not tour. He was separated from his family. And you can hear all of that in this song. It is slow. It is aching. It is almost seven minutes of a man who is lonely and tired and pouring every bit of that into the microphone.
+Here is the story. The band recorded Presence while Robert Plant was recovering from a serious car accident in Rhodes. He was in a wheelchair. Could not tour. Separated from his family. And you can hear every bit of that isolation in this song. It is slow. It aches. It is almost seven minutes of a man who is lonely and exhausted and putting all of that into the microphone.
 
-The thing is, people compare it to Since I Have Been Loving You, which is fair. Similar tempo. Similar blues structure. But Tea for One is darker. More desperate. Since I Have Been Loving You has swagger. Tea for One has surrender. And Page's guitar solo in the back half is one of the most underrated solos in the entire Zeppelin catalog.
+People compare it to Since I Have Been Loving You. Fair enough. Similar tempo. Similar blues structure. But Tea for One is darker. More resigned. Since I Have Been Loving You has swagger. Tea for One has surrender. And Jimmy Page's guitar solo in the back half is one of the most underrated solos in the entire Zeppelin catalog. It does not show off. It just bleeds.
 
-This is the kind of track that rewards you for sitting with it. Do not put it on in the background. Put it on. Sit down. Let it work. You will thank me later. Here it is. Led Zeppelin. Tea for One.
+This is a sit-down-and-listen track. Do not put it on in the background. Give it your attention. You will hear things you have never noticed. Here it is.
+
+[SONG: Led Zeppelin - Tea for One]
+[SONG: Free - All Right Now]
+[SONG: Humble Pie - I Don't Need No Doctor]
 
 ---
 
-### SEGMENT 3: THE RANT — The Lie of Reply All
+### SEGMENT 3: THE RANT — Passwords
 
-You know what I have been thinking about. The reply all button. Specifically why it exists and who it has hurt.
+You know what I have been thinking about. Passwords. And how they have ruined my life.
 
-Every office in America has the same story. Someone sends an email to the whole company. Maybe it is about a birthday cake in the break room. Maybe it is about a parking lot situation. And then. Someone hits reply all. Thanks exclamation point. And then someone else hits reply all. Sounds good exclamation point. And then someone hits reply all to say please stop hitting reply all. And now your inbox has forty-seven emails about a cake you were never going to eat anyway.
+It is twenty twenty-six. I have approximately four hundred and eleven accounts. Every website. Every app. Every streaming service. Every store I bought one thing from in twenty nineteen and now they have my email forever. And every single one of them wants a unique password with at least one uppercase letter, one lowercase letter, a number, a special character, and apparently a blood oath.
 
-I do not work in an office anymore and I still get secondhand anxiety about reply all. It is the digital equivalent of standing up in a crowded room and shouting your response to a private conversation. Nobody asked for your input Kevin. Nobody. But there is Kevin. Replying to all three hundred and twelve people on the thread to say LOL with a thumbs up emoji.
+So I make a password. I make a good one. Capital letter. Exclamation point. The number seven because seven feels trustworthy. And I use it. And it works. For about six weeks. Then I get the email. Time to update your password. Your password cannot be the same as your last three passwords. Pick something new.
 
-And here is the thing. They put the reply all button right next to the reply button. Right next to it. Like a trap. Like somebody at the email company said you know what would be funny. What if we put a button here that could accidentally humiliate someone in front of their entire organization. And they all agreed. And they shipped it.
+Something new. I have run out of new. I have used every combination of my dog's name and my birth year that the English language allows. I have added exclamation points to things that do not deserve exclamation points. My password for one website is literally the word password but with a three instead of the E and a dollar sign instead of the S and somehow that counts as secure.
 
-I have been doing radio since before email was a thing and I will tell you this. If we had a reply all button on the radio I would have been fired in nineteen ninety-two. Some things are meant to be private. Your reply to the birthday cake email is one of them. Here is a song that everybody should hear though. This one is public.
+And then. The forgot password button. Which I use more than any other button on the internet. More than play. More than submit. Forgot password is my most-used feature. They should just rename it the I Give Up button. Because that is what it is.
+
+I used to have one password for everything. It was my cat's name followed by the number one. And life was beautiful. Simple. Free. Now I have a password manager that requires a password to access my passwords. We have come full circle. Here is some music. No password required.
+
+[SONG: Bad Company - Can't Get Enough]
+[SONG: Robin Trower - Bridge of Sighs]
 
 ---
 
 ### SEGMENT 4: QUICK HITS — Birthdays Edition
 
-Quick hits. Birthday edition. Because some legends were born on March thirty-first and they deserve a moment.
+Quick hits. Birthday edition. Because some legends were born on March thirty-first.
 
-First up. Angus Young. AC/DC. Born March thirty-first, nineteen fifty-five. Seventy-one years old today. Seventy-one. This man has been running around stages in a schoolboy uniform playing guitar like the devil himself for over fifty years. He is five foot two and has more energy than people half his age. Happy birthday Angus. You are a national treasure. Australia's national treasure specifically but we are claiming you too.
+First and foremost. Angus Young. AC/DC. Born this day in nineteen fifty-five. Seventy-one years old. This man has been running around stages in a schoolboy uniform playing guitar like his life depends on it for over fifty years. Five foot two and has more energy than people half his age. Happy birthday Angus. You are a force of nature in short pants.
 
-Also born today. Mick Ralphs. Mott the Hoople and Bad Company. Born nineteen forty-four. That man wrote Can Not Get Enough. If you have not heard that riff you have not lived.
+Also born today. Herb Alpert. Nineteen thirty-five. The A in A and M Records. Tijuana Brass. The man built a record label empire and played a mean trumpet while doing it. Ninety-one years old. Still going.
 
-Herb Alpert. Born nineteen thirty-seven. Tijuana Brass. Also the A in A and M Records. The man built a record label empire and played a mean trumpet while doing it.
+Christopher Walken. Born today in nineteen forty-three. Not a musician. But the man has more cowbell energy than most people in the music industry. If you know you know.
 
-And Jack Antonoff. Fun. Bleachers. Born nineteen eighty-four. Also produced approximately half the records you have heard in the last ten years. Taylor Swift. Lana Del Rey. The man is everywhere. Good for him.
+And Rhea Perlman. Carla from Cheers. Born today in nineteen forty-eight. That character could have hosted a morning radio show honestly. She had the attitude for it.
 
-But today is really about Angus. We are going to hear plenty of AC/DC this morning. Starting now.
+Today is really about Angus though. We are going to hear some AC/DC this morning. He earned it. Starting right now.
+
+[SONG: AC/DC - It's a Long Way to the Top (If You Wanna Rock 'n' Roll)]
+[SONG: Thin Lizzy - The Boys Are Back in Town]
 
 ---
 
-### SEGMENT 5: CLOSE
+### SEGMENT 5: PROMOS AND WEATHER UPDATE
 
-That is hour two and we are locked in now. The groove is found. Coming up next hour it is peak energy time. We have got the Guitar God Spotlight and today it is a birthday special for the one and only Angus Young. More music. More opinions you did not ask for. And if you are just tuning in, welcome. You missed the voicemail rant. You are probably better off.
+Quick weather update before we roll on. Sixty-five degrees now. Still overcast. Climbing to eighty-two this afternoon. If you are stepping out for lunch you will not need a jacket. You might want sunglasses though. Georgia sun does not care about cloud cover. It finds a way through.
 
-Oh and before I forget. Tomorrow night. Grunge Wednesday. Tripp takes over WPFQ at five PM. Three hours of Seattle. Flannel optional but you know you want to. I give the kid a hard time but his taste in music is legitimate. I will admit that. Once. Just now. Do not tell him I said that.
+Grunge Wednesday is tomorrow night. Tripp takes over WPFQ at five PM. Three hours of flannel and feedback. If you were a teenager in the nineties this is your church service. If you were not a teenager in the nineties, come anyway. Good music does not have an age requirement.
 
-WPFQ ninety-six point seven. Pretoria Fields Radio. Albany Georgia. Hour three coming at you.
+And swing by Pretoria Fields Brewery if Tuesday night treats you right. Local beer. Local people. Albany at its best. You are listening to WPFQ ninety-six point seven. Pretoria Fields Radio.
+
+[SONG: Stevie Ray Vaughan - Texas Flood]
+[SONG: The Rolling Stones - Can't You Hear Me Knocking]
+
+---
+
+### SEGMENT 6: CLOSE
+
+That is hour two and we are locked in now. The groove is found. Coming up next hour it is peak energy. The Guitar God Spotlight and today it is a birthday special for Angus Young. More music that hits harder. More opinions you did not request. And the best rant of the morning. I have been saving it.
+
+WPFQ ninety-six point seven. Pretoria Fields Radio. Albany Georgia. Hour three is coming.
 
 ---
 
@@ -159,45 +222,54 @@ WPFQ ninety-six point seven. Pretoria Fields Radio. Albany Georgia. Hour three c
 
 Seven AM. Tuesday morning. WPFQ ninety-six point seven. Pretoria Fields Radio. We are in the pocket now Albany.
 
-It is drive time. If you are on Slappey right now, I am sorry. If you are on Oglethorpe heading downtown, I am also sorry but at least you have got good music for company. Weather update. Still overcast. Sitting around seventy degrees now and climbing to eighty-two. Eighteen percent chance of rain which is Georgia for probably not but who knows. Keep a window cracked. It is not bad out there.
+Drive time. If you are on Slappey Boulevard right now I am sorry. If you are on Oglethorpe heading downtown I am also sorry but at least you have good company. Weather update. Sitting around seventy degrees now and climbing. Eighty-two is the target. Still overcast. Eighteen percent chance of rain which at this point I am rounding down to not happening. Keep a window cracked. It is actually pretty nice out there.
 
-This hour is where we hit full stride. I have got the Guitar God Spotlight and today is a special one because it is Angus Young's seventy-first birthday. So we are going deep on the man and the guitar. We have also got the best rant of the morning. I have been saving it. And the music this hour is going to hit. Let us go.
+This is the peak hour. We have got the Guitar God Spotlight and today it is a special one because it is Angus Young's birthday. I have got a rant I have been holding onto all morning. And the music this hour is going to hit harder than the first two cups of coffee. Let us go.
+
+[SONG: AC/DC - Thunderstruck]
+[SONG: Led Zeppelin - Rock and Roll]
 
 ---
 
 ### SEGMENT 2: GUITAR GOD SPOTLIGHT — Angus Young
 
-Guitar God Spotlight. And today it could not be anyone else. Because today, March thirty-first, Angus Young of AC/DC turns seventy-one. So let us talk about this man.
+Guitar God Spotlight. And today there is only one choice. Because today, March thirty-first, Angus Young of AC/DC turns seventy-one. So let us talk about this man and what he means to the guitar.
 
-Angus McKinnon Young. Born in Glasgow, Scotland in nineteen fifty-five. Family moved to Sydney, Australia when he was a kid. His older brother Malcolm handed him a guitar and the rest is volume. Pure, uncut, stadium-shaking volume.
+Angus McKinnon Young. Born in Glasgow, Scotland. Nineteen fifty-five. Family moved to Sydney when he was a kid. Older brother Malcolm handed him a guitar and the rest is volume. Pure uncut stadium-shaking volume.
 
-Here is what makes Angus different from every other guitar player on this list. He is not trying to be complicated. He is not trying to impress other guitar players. He is not up there doing sweep arpeggios or tapping harmonics. He found the thing. The riff. The groove. The pocket. And he stayed there. He made simplicity into an art form. Three chords and the truth, cranked to eleven.
+Here is what makes Angus different. He is not trying to impress other guitar players. He is not up there doing sweep arpeggios or jazz fusion runs. He found the thing. The riff. The groove. The pocket. And he stayed in it. He made simplicity into an art form. Three chords cranked to eleven with enough conviction to fill a stadium.
 
-And the stage presence. Good lord. This man has been doing the duck walk in a schoolboy uniform since he was a teenager. He is seventy-one years old and he has more stage energy than bands a quarter of his age. He sweats through that uniform every night like it owes him money.
+And the stage presence. This man has been doing the duck walk in a schoolboy uniform since he was a teenager. Seventy-one years old and he still has more energy than bands a quarter of his age. He sweats through that uniform every single night like it owes him money.
 
-Think about the riffs this man has given us. Back in Black. Highway to Hell. Thunderstruck. You Shook Me All Night Long. For Those About to Rock. TNT. Those are not just guitar riffs. Those are cultural artifacts. You hear the first two notes of Back in Black and you know exactly what is coming. Your body knows before your brain does.
+Think about the riffs. Back in Black. Highway to Hell. Thunderstruck. You Shook Me All Night Long. For Those About to Rock. TNT. Those are not just guitar parts. Those are cultural artifacts. You hear the first two notes of Back in Black and your body knows what is coming before your brain does.
 
-Malcolm was the rhythm foundation. No question. AC/DC does not work without Malcolm Young and we should never forget that. But Angus was the lightning on top. The chaos. The energy. The guy who made you believe that a guitar could be a weapon.
+Malcolm was the foundation. No question. AC/DC does not exist without Malcolm Young's rhythm guitar and we should never forget that. But Angus was the lightning on top. The chaos. The man who proved that a Gibson SG and an attitude is all you really need.
 
-Seventy-one years old. Still standing. Still playing. Still wearing the shorts. Happy birthday Angus Young. You earned every decibel.
+Happy birthday Angus Young. Seventy-one years old. Still standing. Still playing. Still wearing the shorts. You earned every decibel. Here is one of the greatest rock songs ever recorded. Turn it up. Your neighbors will understand.
 
-Here is Thunderstruck. Turn it up. Your neighbors will understand.
+[SONG: AC/DC - Back in Black]
+[SONG: AC/DC - Highway to Hell]
+[SONG: Jimi Hendrix - Voodoo Child (Slight Return)]
 
 ---
 
 ### SEGMENT 3: THE RANT — People Who Back Into Parking Spots
 
-Alright. I have been holding this one in and I need to let it out. People who back into parking spots. We need to talk.
+Alright. Peak hour rant. I have been saving this one. People who back into parking spots. We need to have a conversation.
 
-You are at the Walmart on Nottingham. The parking lot is full. People are circling. Tensions are medium to high. And then you see it. A spot. Right there. Open. Beautiful. You signal. You start to turn. And then the car in front of you stops. And starts backing up. They are backing in. Into a regular parking spot. At the Walmart. On a Tuesday afternoon.
+You are at the Walmart on Nottingham Way. Parking lot is full. People are circling like vultures. Tensions are medium to high. And then you see it. A spot. Open. Beautiful. You start to turn. And the car in front of you stops. And starts backing up. They are backing in. Into a regular parking spot. At the Walmart. On a Tuesday.
 
-And I am not talking about a quick little reverse. I am talking about a twelve-point operation. They back up. Pull forward. Adjust. Back up again. Check the mirrors. Adjust again. There is a line of cars forming. Someone behind me has given up on life. A child in a minivan is aging visibly. And this person is out here parallel parking into a spot that was designed to be driven into face first.
+This is not a quick little reverse. This is a twelve-point operation. They back up. Pull forward. Check the mirrors. Adjust. Back up again. There is a line forming behind me. Someone three cars back has given up on life. A child in a minivan is aging visibly. And this person is executing what appears to be a NASA docking procedure into a space that was designed to be driven into face first.
 
-And here is what gets me. They always say it is easier to pull out. That is their argument. It is easier to leave. Okay. You know what else makes it easy to leave? Leaving. Just driving forward and leaving. Like every other person in this parking lot. You saved yourself four seconds pulling out and cost the rest of us two minutes pulling in. That is not efficiency. That is selfishness with geometry.
+And they always say the same thing. It is easier to pull out. That is the argument. Okay. You know what else is easy. Just leaving. Driving forward and leaving. Like every other person in this parking lot. You saved yourself four seconds on the exit and cost the rest of us two full minutes on the entry. That is not efficiency. That is selfishness with geometry.
 
-Now look. If you drive a truck and you need the angle, I get it. If you are at a job site and you need your tailgate accessible, fine. But if you are backing a Camry into a spot at Piggly Wiggly like you are docking the space shuttle, I need you to know that the rest of us are judging you. Silently. But firmly.
+Now look. If you drive a truck and you need the angle, I get it. If you need tailgate access at a job site, fine. But if you are backing a Camry into a spot at Piggly Wiggly like you are parallel parking a submarine, I need you to know that the entire parking lot is judging you. Silently. But firmly.
 
-I back into nothing. I pull in face first like a normal person and I deal with the consequences when I leave. That is called living. Here is some music for the normal people.
+I back into nothing. I pull in face first. I deal with the consequences when I leave. That is called being a person. Here is music for the normal people.
+
+[SONG: Tom Petty and the Heartbreakers - I Won't Back Down]
+[SONG: The Black Keys - Gold on the Ceiling]
+[SONG: ZZ Top - Sharp Dressed Man]
 
 ---
 
@@ -205,31 +277,30 @@ I back into nothing. I pull in face first like a normal person and I deal with t
 
 Quick hits. Seven forty-five on a Tuesday. Here is what is going on.
 
-March Madness Final Four is locked in for Saturday. Arizona versus Michigan. UConn versus Illinois. UConn's comeback against Duke on Sunday was one of the best games I have seen in years. Down nineteen. Braylon Mullins hits a three from thirty-five feet at the buzzer. If you did not see it go find the clip. It is worth the two minutes.
+March Madness Final Four is locked in. Saturday is going to be electric. If your bracket is still intact at this point you either know something the rest of us do not or you got very very lucky picking mascots. Either way. Respect.
 
-The women's tournament is rolling too. South Carolina looked dominant. Texas looked dominant. Monday night Elite Eight games should be something. Pay attention.
+The Masters is next week. Augusta National. About three hours up I-75 from here. If you have never been for practice rounds, this is your reminder. The course is immaculate. The pimento cheese sandwich is four dollars and worth every penny. And the azaleas are doing their thing right now. It is the best sports event within driving distance of Albany and that is not even debatable.
 
-MLB Opening Day is Thursday. The Braves start their season and for those of us in southwest Georgia that means baseball is back and we can stop pretending to care about whatever else was happening in sports.
+MLB Opening Day is Thursday. The Braves start a new season and for those of us in southwest Georgia that means we can stop pretending basketball is our primary sport. I like basketball. But I love baseball. And I will not apologize for that.
 
-In local news the city of Albany has a new community needs assessment survey open. They want to hear from residents about priorities for economic development. If you live here and you have opinions, and I know you do, go make them count.
+Locally. The city of Albany has a community needs assessment survey open. They want to hear from residents about priorities for economic development. If you live here and you have opinions and I know you do because you are listening to me complain about parking at seven forty-five in the morning, go make those opinions count.
 
-Also. Today in nineteen eighty-four Kenny Loggins hit number one with Footloose. From the Kevin Bacon movie. Held the top spot for three weeks. I am contractually obligated to acknowledge this happened on this date. It is a fact. I will not be sharing my personal opinion on Footloose at this time.
+And on this day in nineteen ninety-five. Selena Quintanilla was taken from us in Corpus Christi at the age of twenty-three. Tejano music lost a queen that day. If you have not listened to her music, go fix that. That voice was something special.
 
-And on a more serious note. On this day in twenty nineteen, Nipsey Hussle was shot and killed in Los Angeles at the age of thirty-three. Victory Lap was his only studio album and it was Grammy-nominated. The man was building something real in his community. Gone way too soon.
-
-Here is more music.
+[SONG: Gary Clark Jr. - When My Train Pulls In]
+[SONG: Aerosmith - Walk This Way]
 
 ---
 
 ### SEGMENT 5: CLOSE
 
-That is hour three. Peak hour. We peaked. It is all downhill from here and I mean that in the pleasant coasting way, not the everything is falling apart way. Although. It is still only Tuesday so both interpretations are valid.
+That is hour three. Peak hour. We peaked. It is all pleasant downhill from here. Coasting. Not crashing. Important distinction on a Tuesday.
 
-Last hour coming up. We are bringing it home nice and easy. I have got an album recommendation for you. One more rant because apparently I am not done yet. And some smooth landing music to carry you into the rest of your day.
+Last hour coming up. Album recommendation. One more observation about the human condition. And smooth landing music to carry you wherever this day takes you.
 
-Reminder. Throwback Country this Sunday on WPFQ ninety-six point seven. Todd Fox from four thirty to eight. Real country. The kind that sounds like dirt roads and regret. If your truck does not have a dent in it you might not qualify. But show up anyway. Todd does not check.
+Throwback Country this Sunday on WPFQ ninety-six point seven. Todd Fox from four thirty to eight PM. Real country. The kind that sounds like dirt roads and honest mistakes. If your truck does not have a dent in it you might not qualify but show up anyway. Todd does not check.
 
-WPFQ ninety-six point seven. Pretoria Fields Radio. Albany Georgia. One more hour. Let us finish strong.
+WPFQ ninety-six point seven. Pretoria Fields Radio. Albany Georgia. One more hour. Let us bring it home.
 
 ---
 
@@ -247,41 +318,51 @@ WPFQ ninety-six point seven. Pretoria Fields Radio. Albany Georgia. One more hou
 
 ### SEGMENT 1: OPEN
 
-Eight AM. Last hour. Tuesday morning on WPFQ ninety-six point seven. Pretoria Fields Radio. Let us bring it home.
+Eight AM. Last hour. Tuesday morning on WPFQ ninety-six point seven. Pretoria Fields Radio. Let us bring this one home.
 
-We made it to the last stretch folks. The coffee has done its work. The rants have been ranted. Angus Young has been properly celebrated. And now we ease into the final hour like the last few miles of a good drive when you have got the windows down and nowhere urgent to be.
+The coffee has done its work. The rants have been ranted. Angus Young has been properly celebrated. Now we ease into the final stretch like the last few miles of a road trip when you have the windows down and the radio up and nowhere urgent to be.
 
-Weather. Eighty-two today. Overcast but warm. Low tonight around sixty-one. Eighteen percent chance of rain which at this point I think we can safely round down to not happening. If you are heading outside for lunch you will not need a jacket. You might need sunglasses even with the clouds. Georgia sun does not care about overcast. It finds a way.
+Weather. Eighty-two today. Overcast but warm. Low tonight around sixty-one. That eighteen percent chance of rain has done nothing all morning so I think we can safely call it dry. If you are heading outside you do not need a jacket. Might still want sunglasses. Georgia sun punches through clouds like they are not even there.
 
-This hour I have got an album you need to own if you do not already. One more observation about modern life. And music to coast on. Let us do this last hour right.
+This hour I have got an album you need to own. One more thought about modern life. And music that coasts. Let us do this last hour right.
+
+[SONG: Eric Clapton - Wonderful Tonight]
+[SONG: The Allman Brothers Band - Melissa]
 
 ---
 
 ### SEGMENT 2: ALBUM YOU SHOULD OWN — "Brothers" by The Black Keys
 
-Album you should own. And if you already own this one, good. You are ahead of the curve. But if you do not. Fix that today.
+Album you should own. And if you already have this one, good. You are ahead of the class. If you do not, fix that today.
 
-The Black Keys. Brothers. Twenty-ten. Danger Mouse producing. And this is the album where Dan Auerbach and Patrick Carney went from that garage blues duo your cool friend kept telling you about to the band that everybody knew. Tighten Up was the single. You have heard it. You have definitely heard it. It won three Grammys.
+The Black Keys. Brothers. Twenty-ten. Danger Mouse producing. This is the album where Dan Auerbach and Patrick Carney went from that garage blues duo your cool friend kept telling you about to the band everybody knew. Tighten Up was the single. You have heard it. You have definitely heard it.
 
-But here is why I am recommending the whole album. Brothers is a front-to-back listen. It is blues rock filtered through soul and psychedelic production and it never loses the grit. Everlasting Light opens the record and it sounds like a lost Motown track recorded in a basement in Akron, Ohio. Which is basically what it is. Then you get into Howlin for You. Next Girl. Ten Cent Pistol. Each one could have been a single.
+But the whole album is the thing. Brothers is a front-to-back listen. Blues rock filtered through soul and psychedelic production without ever losing the grit. Everlasting Light opens the record and it sounds like a lost Motown track recorded in a basement in Akron Ohio. Which is basically what it is. Then you get Howlin for You. Next Girl. Ten Cent Pistol. Each one could have been a single on its own.
 
-What I love about this record is that it sounds expensive but feels cheap. And I mean that as the highest compliment. It sounds like two guys in a room who know exactly what they are doing. No filler. No fluff. No seven-minute ambient interludes. Just songs. Good songs. Played well. With feeling.
+What I love about this record is it sounds expensive but feels scrappy. Two guys in a room who know exactly what they are doing. No filler. No seven-minute ambient interludes. Just songs. Played well. With feeling. If you like the blues rock swagger we have been playing all morning, Brothers is the modern torch carrier for that tradition. It proves the blues is not dead. It just moved to Ohio and got a little weird.
 
-If you like what we have been playing this morning. The blues rock. The guitar-driven swagger. Brothers is the modern version of that tradition. It is the album that proves the blues is not dead. It just moved to Ohio and got a little weird. Go get it. Vinyl if you can. It sounds better on wax. Everything does. Fight me.
+Go get it. Vinyl if you can find it. It sounds better on wax. Everything does. I will die on that hill. Here is some Black Keys to prove my point.
+
+[SONG: The Black Keys - Tighten Up]
+[SONG: The Black Keys - Howlin' for You]
 
 ---
 
-### SEGMENT 3: THE RANT — The Gym in January vs March
+### SEGMENT 3: THE RANT — The Gym in January vs. The Gym in March
 
-Last rant of the morning and this one is seasonal. The gym. In January versus the gym in March.
+Last rant of the morning and this one is timely. The gym. January versus March.
 
-January second. You walk into the gym. You cannot find a parking spot. You cannot find a treadmill. You cannot find a locker. There are people everywhere. They are all wearing brand new shoes and brand new headphones and they are all looking at the machines like they are trying to defuse a bomb. Someone is doing something on the lat pulldown that I am pretty sure is not a real exercise. There is a wait list for the elliptical. A wait list. For the elliptical. That is not a gym. That is a nightclub with dumbbells.
+January second. You walk in. Cannot find a parking spot. Cannot find a treadmill. Cannot find a locker. There are people everywhere wearing brand new shoes and brand new headphones looking at the machines like they are trying to defuse a bomb. Someone is doing something on the lat pulldown that I am fairly certain is not a recognized exercise. There is a wait list for the elliptical. A wait list. For the elliptical. That is not a gym. That is a nightclub with dumbbells.
 
-Now. March thirty-first. Today. You walk into that same gym. Tumbleweeds. The parking lot is empty. The machines are all available. The guy at the front desk makes eye contact with you because he has not seen another human in forty-five minutes. The January crowd is gone. They made it about six weeks. Maybe seven if they had a buddy system. But the resolutions have faded. The motivation has evaporated. The brand new shoes are in the back of a closet next to a foam roller that was used exactly once.
+Now. March thirty-first. Today. Same gym. Tumbleweeds. The parking lot is a ghost town. Every machine is available. The guy at the front desk makes eye contact because he has not seen another human in forty-five minutes. The January crowd lasted about six weeks. Maybe seven if they had a buddy system. But the resolutions faded. The motivation evaporated. The brand new shoes are in the back of a closet next to a foam roller that was used exactly once.
 
-And you know what. I am not judging. I have been that guy. I have been the January guy. I have bought the shoes. I have downloaded the app. I have told myself this is the year. And then February hits and suddenly the couch has some really compelling arguments.
+And I am not judging. I have been that guy. I have been the January guy. I bought the shoes. Downloaded the app. Told myself this is the year. And then February rolled around and the couch presented a very compelling counter-argument.
 
-But here is the silver lining. If you are still going in March, if you made it through the January hype and the February doubt and you are still showing up at the end of March? You are not on a resolution anymore. You are on a routine. And that is the whole game. So good for you. The gym is all yours now. Enjoy the parking. Here is a song.
+But here is the thing. If you are still going in March. If you made it through the January hype and the February doubt and you are still showing up at the end of the month. You are not on a resolution anymore. You are on a routine. And that is the whole game. The gym is yours now. Enjoy the parking. You earned it. Here is a song.
+
+[SONG: Joe Bonamassa - Sloe Gin]
+[SONG: Fleetwood Mac - Oh Well]
+[SONG: B.B. King - The Thrill Is Gone]
 
 ---
 
@@ -289,34 +370,39 @@ But here is the silver lining. If you are still going in March, if you made it t
 
 Last round of quick hits for the Tuesday morning show.
 
-Final Four hype is building. Saturday April fourth. Arizona Michigan. UConn Illinois. If you want my completely uninformed prediction I am going Arizona all the way. They looked like the best team in the tournament this weekend. But I also picked three of my Elite Eight teams based on mascot intimidation factor so take that for what it is worth.
+Final Four is Saturday. Brackets are busted. Dreams are alive. If you want my prediction I am going to decline because every prediction I have ever made in March has been wrong and at this point it is a tradition I am committed to.
 
-Women's Elite Eight games tonight. Keep an eye on South Carolina. That team is a machine.
+The Masters starts next week at Augusta. Phil and Tiger and the next generation all on the same course. Three hours from Albany. If you can swing it go for practice rounds Tuesday or Wednesday. Cheaper. Quieter. And you still get to walk the most beautiful golf course on planet Earth.
 
-Locally. The Dougherty County Summer Empowerment and Internship Program is open for applications. Paid internships. Local students. County government. If you know a young person who could use the experience and the paycheck, point them in the right direction.
+Locally. If you know a young person looking for summer work the Dougherty County internship program is taking applications. Paid. County government. Real experience. Point them in the right direction.
 
-Grunge Wednesday is tomorrow. Tripp takes over WPFQ ninety-six point seven at five PM. Three hours. Pearl Jam. Soundgarden. Alice in Chains. Nirvana. The whole Seattle catalog. Flannel optional but encouraged. I will be listening from my couch. In flannel. Not that I will ever confirm that publicly.
+Grunge Wednesday is tomorrow. Tripp takes over WPFQ ninety-six point seven at five PM. Three hours of Pearl Jam. Soundgarden. Alice in Chains. Nirvana. The whole Seattle catalog. Flannel encouraged. I will be listening from home. Possibly in flannel. I will neither confirm nor deny.
 
-And Throwback Country this Sunday with Todd Fox. Four thirty to eight. The real stuff. Waylon. Willie. Merle. Cash. If your radio dial does not go to ninety-six point seven on Sunday evenings you are missing out.
+Throwback Country this Sunday with Todd Fox. Four thirty to eight. Waylon. Willie. Merle. Cash. The real stuff. Your truck radio was built for this.
 
-Swing by Pretoria Fields Brewery if Tuesday night is treating you right. Good beer. Good people. Albany at its finest.
+And swing by Pretoria Fields Brewery if Tuesday evening is treating you well. Good beer. Good people. Local as it gets. Albany's own.
+
+[SONG: Peter Frampton - Do You Feel Like We Do]
+[SONG: Lynyrd Skynyrd - Tuesday's Gone]
 
 ---
 
 ### SEGMENT 5: SHOW CLOSE
 
-That is the show. Four hours. A Tuesday. The day nobody writes songs about. But we gave it a good one anyway.
+That is the show. Four hours. A Tuesday. The day nobody writes songs about. Well. Lynyrd Skynyrd wrote one actually. We just played it. So I stand corrected.
 
-Here is what we did today. We learned that Jimi Hendrix set a guitar on fire in London fifty-nine years ago and changed music forever. We learned that Chuck Berry wrote the blueprint for every rock star dream with Johnny B. Goode. We wished Angus Young a happy seventy-first and played the riffs to prove why he matters. We complained about voicemail and parking lots and the lies of reply all. And we made it through a Tuesday morning together. Which is its own kind of accomplishment.
+We learned today that Hendrix set a guitar on fire in London fifty-nine years ago and nothing was ever the same. That Chuck Berry wrote the blueprint for every guitar hero dream with Johnny B. Goode. We wished Angus Young a happy seventy-first and played the riffs to back it up. We complained about snooze buttons and parking lots and the tyranny of passwords. And we made it through a Tuesday morning together. Which is its own quiet achievement.
 
-Hey. Before I go. I mean this. The fact that you are out there right now. Driving to work. Getting the kids ready. Opening the shop. Starting the shift. Whatever your Tuesday looks like. You showed up. And showing up is the whole thing. Monday gets all the credit for being hard. But Tuesday is where you prove you meant it. You are here. That matters more than you think.
+Hey. Before I go. Tuesday does not get enough credit. Monday is the one everybody talks about. Friday is the one everybody celebrates. But Tuesday is the day you actually settle in and do the work. It is the day that proves you meant it. You showed up today. You are driving to work or getting the kids ready or opening the shop or starting the shift. Whatever your Tuesday looks like. You are here. And that matters more than you think.
 
-Go have a good Tuesday. Be decent to people. Listen to good music. And if somebody calls you, let it go to voicemail. You have my permission.
+Go have a good one. Be decent to people. Listen to good music. And if that gym parking lot is empty when you get there tonight, enjoy it. You earned it.
 
-Grunge Wednesday tomorrow with Tripp at five. Throwback Country Sunday with Todd Fox at four thirty. Swing by Pretoria Fields if the week is treating you right.
+Grunge Wednesday tomorrow with Tripp at five PM. Throwback Country Sunday with Todd Fox at four thirty. Swing by Pretoria Fields if the week is treating you right.
 
 I am Dr. Johnny Fever. Booker out.
 
 WPFQ ninety-six point seven. Pretoria Fields Radio. Albany Georgia.
+
+[SONG: Derek Trucks Band - Get What You Deserve]
 
 ---

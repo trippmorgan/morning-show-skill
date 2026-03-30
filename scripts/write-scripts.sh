@@ -242,31 +242,17 @@ fi
 # --- Split into hour files ---
 log "Splitting output into hour files..."
 
-# Split on the delimiter
-IFS='' read -r -d '' HOUR1 HOUR2 HOUR3 HOUR4 < <(
-  echo "$RAW_OUTPUT" | awk '
-    BEGIN { hour = 1 }
-    /^===HOUR_BREAK===$/ { hour++; next }
-    { print >> "/dev/fd/" (hour + 2) }
-  ' 3>/dev/fd/3 4>/dev/fd/4 5>/dev/fd/5 6>/dev/fd/6
-  cat /dev/fd/3; printf '\0'
-  cat /dev/fd/4; printf '\0'
-  cat /dev/fd/5; printf '\0'
-  cat /dev/fd/6; printf '\0'
-) || true
-
-# Simpler split approach: use csplit-like logic
 TMPDIR_WORK="$(mktemp -d)"
 trap 'rm -rf "$TMPDIR_WORK"' EXIT
 
 echo "$RAW_OUTPUT" > "$TMPDIR_WORK/raw.md"
 
 # Split on ===HOUR_BREAK===
-awk '
+awk -v outdir="$TMPDIR_WORK" '
   BEGIN { file = 1 }
   /^===HOUR_BREAK===$/ { file++; next }
-  { print >> (ENVIRON["TMPDIR_WORK"] "/hour" file ".md") }
-' TMPDIR_WORK="$TMPDIR_WORK" "$TMPDIR_WORK/raw.md"
+  { print >> (outdir "/hour" file ".md") }
+' "$TMPDIR_WORK/raw.md"
 
 WRITTEN=0
 for N in 1 2 3 4; do
