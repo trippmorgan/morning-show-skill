@@ -126,14 +126,14 @@ AUDIO_PATH=$(cfg_val audio_path "$CONFIG")
 TEMP_PATH=$(cfg_val temp_path "$CONFIG")
 DB=$(cfg_val db "$CONFIG")
 SQL_SERVER=$(cfg_val sql_server "$CONFIG")
-SQL_USER=$(cfg_val sql_user "$CONFIG")
-SQL_PASS=$(cfg_val sql_pass "$CONFIG")
+SQL_USER="${P1_SQL_USER:-$(cfg_val sql_user "$CONFIG")}"
+SQL_PASS="${P1_SQL_PASS:-$(cfg_val sql_pass "$CONFIG")}"
 DPL_IMPORT=$(cfg_val dpl_import_path "$CONFIG")
 EXTRO_OFFSET=$(cfg_val extro_offset_ms "$CONFIG")
 
 # Defaults
 SQL_SERVER="${SQL_SERVER:-localhost\\p1sqlexpress}"
-SQL_USER="${SQL_USER:-REDACTED_USER}"
+SQL_USER="${SQL_USER:-${P1_SQL_USER:-REDACTED_USER}}"
 SQL_PASS="${SQL_PASS:-PlayoutONE.}"
 DPL_IMPORT="${DPL_IMPORT:-F:\\PlayoutONE\\Import\\Music Logs}"
 EXTRO_OFFSET="${EXTRO_OFFSET:-5000}"

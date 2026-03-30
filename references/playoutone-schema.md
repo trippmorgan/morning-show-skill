@@ -4,7 +4,7 @@
 
 Database: `PlayoutONE_Standard`  
 Server: `localhost\p1sqlexpress`  
-Auth: `REDACTED_USER` / `PlayoutONE.`
+Auth: via environment variables `P1_SQL_USER` / `P1_SQL_PASS`
 
 ---
 
