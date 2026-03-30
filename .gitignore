@@ -1,0 +1,3 @@
+shows/*/audio/*.mp3
+shows/*/segments/*.mp3
+shows/*/segments/concat-*.txt

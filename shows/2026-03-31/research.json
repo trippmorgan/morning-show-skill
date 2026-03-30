@@ -1,0 +1,30 @@
+{
+  "date": "2026-03-31",
+  "day_name": "Tuesday",
+  "year": 2026,
+  "month": 3,
+  "day": 31,
+  "weather": {
+    "location": "Albany, GA",
+    "high_f": 82.4,
+    "low_f": 60.9,
+    "precipitation_probability": 18,
+    "weather_code": 3,
+    "description": "Overcast"
+  },
+  "music_history": {
+    "status": "placeholder",
+    "hint": "thisdayinmusic.com and songfacts.com/calendar for 3/31",
+    "events": []
+  },
+  "birthdays": {
+    "status": "placeholder",
+    "hint": "Search for notable birthdays on this date",
+    "people": []
+  },
+  "news": {
+    "status": "placeholder",
+    "hint": "Search for current news headlines relevant to morning show audience",
+    "stories": []
+  }
+}
