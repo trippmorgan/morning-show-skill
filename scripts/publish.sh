@@ -134,7 +134,7 @@ EXTRO_OFFSET=$(cfg_val extro_offset_ms "$CONFIG")
 # Defaults
 SQL_SERVER="${SQL_SERVER:-localhost\\p1sqlexpress}"
 SQL_USER="${SQL_USER:-${P1_SQL_USER:-REDACTED_USER}}"
-SQL_PASS="${SQL_PASS:-PlayoutONE.}"
+SQL_PASS="${SQL_PASS:-${P1_SQL_PASS}}"
 DPL_IMPORT="${DPL_IMPORT:-F:\\PlayoutONE\\Import\\Music Logs}"
 EXTRO_OFFSET="${EXTRO_OFFSET:-5000}"
 
