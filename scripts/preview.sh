@@ -79,23 +79,13 @@ fi
 FOUND=0
 TOTAL_SIZE=0
 
-for N in 1 2 3 4; do
-  SRC=""
-  # Try naming conventions in order
-  for pattern in "FULL-HOUR${N}-COMPLETE.mp3" "MORNING-SHOW-H${N}.mp3"; do
-    candidate="${AUDIO_DIR%/}/${pattern}"
-    if [[ -f "$candidate" ]]; then
-      SRC="$candidate"
-      break
-    fi
-  done
+for SRC in "${AUDIO_DIR%/}"/MORNING-SHOW-H*.mp3 "${AUDIO_DIR%/}"/FULL-HOUR*-COMPLETE.mp3; do
+  [[ -f "$SRC" ]] || continue
+  BASENAME="$(basename "$SRC" .mp3)"
+  # Extract hour number from filename
+  N=$(echo "$BASENAME" | grep -oP '\d+' | tail -1)
 
-  if [[ -z "$SRC" ]]; then
-    warn "Hour ${N}: no source file found, skipping"
-    continue
-  fi
-
-  OUTPUT="${AUDIO_DIR%/}/HOUR${N}-REVIEW.mp3"
+  OUTPUT="${AUDIO_DIR%/}/${BASENAME}-REVIEW.mp3"
   FOUND=$((FOUND + 1))
 
   log "Hour ${N}: compressing ${BOLD}$(basename "$SRC")${RESET} -> HOUR${N}-REVIEW.mp3"
@@ -115,15 +105,15 @@ for N in 1 2 3 4; do
   TOTAL_SIZE=$((TOTAL_SIZE + size_bytes))
 
   if (( size_bytes > 52428800 )); then
-    warn "  HOUR${N}-REVIEW.mp3: ${mins}:$(printf '%02d' "$secs") — ${CYAN}${size_mb}MB${RESET} ${RED}(exceeds 50MB Telegram limit!)${RESET}"
+    warn "  ${BASENAME}-REVIEW.mp3: ${mins}:$(printf '%02d' "$secs") — ${CYAN}${size_mb}MB${RESET} ${RED}(exceeds 50MB Telegram limit!)${RESET}"
   else
-    info "  HOUR${N}-REVIEW.mp3: ${mins}:$(printf '%02d' "$secs") — ${CYAN}${size_mb}MB${RESET}"
+    info "  ${BASENAME}-REVIEW.mp3: ${mins}:$(printf '%02d' "$secs") — ${CYAN}${size_mb}MB${RESET}"
   fi
 done
 
 if [[ $FOUND -eq 0 ]]; then
   err "No hour files found in $AUDIO_DIR"
-  err "Expected: FULL-HOUR{1-4}-COMPLETE.mp3 or MORNING-SHOW-H{1-4}.mp3"
+  err "Expected: MORNING-SHOW-H*.mp3 or FULL-HOUR*-COMPLETE.mp3"
   exit 1
 fi
 
@@ -133,14 +123,14 @@ log "Compressed ${BOLD}${FOUND}${RESET} hour(s) — total preview size: ${CYAN}$
 
 # --- Send via openclaw message tool ---
 echo "" >&2
-for N in 1 2 3 4; do
-  REVIEW="${AUDIO_DIR%/}/HOUR${N}-REVIEW.mp3"
+for REVIEW in "${AUDIO_DIR%/}"/*-REVIEW.mp3; do
   [[ -f "$REVIEW" ]] || continue
+  RNAME="$(basename "$REVIEW")"
 
-  CMD="openclaw message --to 8048875001 --file \"${REVIEW}\" --caption \"Hour ${N} preview\""
+  CMD="openclaw message --to 8048875001 --file \"${REVIEW}\" --caption \"${RNAME} preview\""
 
   if [[ "$SEND" == true ]]; then
-    log "Sending Hour ${N} preview..."
+    log "Sending ${RNAME}..."
     eval "$CMD"
   else
     info "Would run: ${CYAN}${CMD}${RESET}"
