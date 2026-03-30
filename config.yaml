@@ -1,0 +1,52 @@
+# Morning Show Production Configuration
+
+# --- Voice synthesis (ElevenLabs) ---
+voice:
+  id: ZnX1f6YZpySUHtk0RDLM
+  model: eleven_multilingual_v2
+  stability: 0.5
+  similarity_boost: 0.85
+  style: 0.35
+  format: mp3_44100_128
+
+# --- Station / playout system ---
+station:
+  host: p1-wpfq-srvs
+  audio_path: 'F:\PlayoutONE\Audio'
+  temp_path: 'C:\temp'
+  db: PlayoutONE_Standard
+  sql_auth: integrated
+
+# --- Audio processing ---
+audio:
+  sample_rate: 44100
+  channels: 2
+  bitrate: 192k
+  lufs: -16
+  true_peak: -1.5
+  preview_bitrate: 128k
+  format: mp3
+  ffmpeg_filter: 'loudnorm=I=-16:TP=-1.5:LRA=11'
+
+# --- Show schedule ---
+show:
+  hours: [5, 6, 7, 8]
+  days:
+    - monday
+    - tuesday
+    - wednesday
+    - thursday
+    - friday
+  persona: dr-johnny-fever
+  timezone: America/New_York
+
+# --- Delivery / notifications ---
+delivery:
+  telegram_target: "8048875001"
+  max_file_mb: 50
+
+# --- ElevenLabs API ---
+elevenlabs:
+  api_key_env: ELEVENLABS_API_KEY
+  api_key_file: '~/.env'
+  rate_limit_sleep: 1
