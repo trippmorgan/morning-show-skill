@@ -96,3 +96,21 @@ Eclectic mix. This is the wild card day — classic rock, alt-rock, some indie, 
 | 8:45 | **Song block** | 2 songs. |
 | 8:54 | **Close** | "Hump day — conquered. The rest is gravity. Tonight: **Grunge Wednesday with Tripp, 5 to 8 PM right here on WPFQ 96.7.** Don't miss it. Pretoria Fields Brewery is always a good Wednesday call. Throwback Country Sunday with Todd Fox this weekend. I'm Dr. Johnny Fever. Pretoria Fields Radio. See you on the other side." |
 | 8:56 | **Song** | 1 grunge closer — hand the baton to tonight's show. |
+
+---
+
+## CRITICAL: Song Markers
+
+Every song block in the schedule MUST be written as explicit `[SONG: Artist - Title]` markers.
+These are machine-parsed. The pipeline will fail without them.
+
+Example:
+```
+### SEGMENT 2: SONG BLOCK
+[SONG: Pearl Jam - Black]
+[SONG: Soundgarden - Black Hole Sun]
+[SONG: Alice in Chains - Down in a Hole]
+```
+
+Songs MUST exist in the PlayoutONE database. Stick to well-known tracks from the genre guidance.
+Each hour needs 8-12 songs total, distributed across 3-4 song blocks.

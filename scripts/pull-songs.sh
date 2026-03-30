@@ -32,10 +32,15 @@ Usage:
   pull-songs.sh --songs 'Eric Clapton - Cocaine, Pearl Jam - Black' --output-dir <dir>
       Search by "Artist - Title" pairs, download best matches. Outputs JSON manifest.
 
+  pull-songs.sh --from-scripts <dir> --output-dir <dir>
+      Parse [SONG: Artist - Title] markers from script .md files in <dir>.
+      Extracts all unique songs and downloads them.
+
 Options:
   --uids <csv>         Comma-separated PlayoutONE UIDs
   --search <term>      Search artist/title (list only, no download)
   --songs <csv>        Comma-separated "Artist - Title" pairs
+  --from-scripts <dir> Parse [SONG:] markers from .md files in directory
   --output-dir <dir>   Local directory for downloaded files
   --help               Show this help
 EOF
@@ -47,21 +52,46 @@ MODE=""
 UIDS=""
 SEARCH_TERM=""
 SONGS=""
+SCRIPTS_DIR=""
 OUTPUT_DIR=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --help)      usage ;;
-    --uids)      MODE="uids";   UIDS="$2";        shift 2 ;;
-    --search)    MODE="search";  SEARCH_TERM="$2"; shift 2 ;;
-    --songs)     MODE="songs";   SONGS="$2";       shift 2 ;;
-    --output-dir) OUTPUT_DIR="$2"; shift 2 ;;
+    --uids)         MODE="uids";    UIDS="$2";         shift 2 ;;
+    --search)       MODE="search";  SEARCH_TERM="$2";  shift 2 ;;
+    --songs)        MODE="songs";   SONGS="$2";        shift 2 ;;
+    --from-scripts) MODE="scripts"; SCRIPTS_DIR="$2";  shift 2 ;;
+    --output-dir)   OUTPUT_DIR="$2"; shift 2 ;;
     *) error "Unknown option: $1"; usage ;;
   esac
 done
 
+# --- from-scripts: parse [SONG: Artist - Title] markers ---
+if [[ "$MODE" == "scripts" ]]; then
+  if [[ -z "$SCRIPTS_DIR" || ! -d "$SCRIPTS_DIR" ]]; then
+    error "Scripts directory not found: $SCRIPTS_DIR"
+    exit 1
+  fi
+  log "Parsing [SONG:] markers from $SCRIPTS_DIR/*.md"
+  PARSED_SONGS=$(grep -roh '\[SONG: [^]]*\]' "$SCRIPTS_DIR"/*.md 2>/dev/null \
+    | sed 's/\[SONG: //; s/\]//' \
+    | sort -u \
+    | paste -sd ',' -)
+  if [[ -z "$PARSED_SONGS" ]]; then
+    error "No [SONG: Artist - Title] markers found in scripts"
+    exit 1
+  fi
+  count=$(echo "$PARSED_SONGS" | tr ',' '\n' | wc -l)
+  log "Found $count unique songs"
+  echo "$PARSED_SONGS" | tr ',' '\n' >&2
+  # Switch to songs mode with the parsed list
+  MODE="songs"
+  SONGS="$PARSED_SONGS"
+fi
+
 if [[ -z "$MODE" ]]; then
-  error "One of --uids, --search, or --songs is required."
+  error "One of --uids, --search, --songs, or --from-scripts is required."
   usage
 fi
 

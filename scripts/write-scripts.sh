@@ -175,7 +175,16 @@ Each hour script must follow this structure:
 - Start with a YAML-style header: Hour number, time slot, energy level, title
 - Use segment markers exactly like: ### SEGMENT 1: THE OPEN, ### SEGMENT 2: WEATHER, etc.
 - Every spoken word should be written out as the DJ would say it (no placeholders, no bracketed instructions)
-- Song blocks should be marked as: ### SONG BLOCK (with a note like "3 songs — mid-tempo grunge")
+- Song blocks MUST use explicit machine-readable markers, one per line:
+  [SONG: Artist - Title]
+  Example:
+  ### SONG BLOCK
+  [SONG: Pearl Jam - Black]
+  [SONG: Soundgarden - Black Hole Sun]
+  [SONG: Alice in Chains - Down in a Hole]
+- These markers are parsed by automation. Do NOT write "here is some music" without a [SONG:] marker
+- Every song block needs 2-4 [SONG:] markers. Each hour needs 8-12 songs total
+- Pick songs that actually exist — well-known tracks from established artists in the genre
 - Promos and cross-promotions should be written out as spoken word
 
 # PERSONA
@@ -205,6 +214,10 @@ ${RESEARCH_CONTENT}
 8. Keep rants to ~60 seconds of spoken word, opens to ~45 seconds, weather to ~25 seconds, closes to ~25 seconds
 9. "Booker out" is ONLY used in the Hour 4 show close — never before
 10. NEVER break the fourth wall about being AI. Dr. Johnny Fever IS the DJ. Period.
+11. EVERY song block MUST contain [SONG: Artist - Title] markers — one per line, exactly that format
+12. Each hour must have 8-12 [SONG:] markers total, distributed across 3-4 song blocks
+13. Songs must be well-known tracks that would exist in a classic/alt/indie rock radio station library
+14. After each talk segment that transitions to music, end with a natural segue AND the [SONG:] markers
 PROMPT_EOF
 )"
 
