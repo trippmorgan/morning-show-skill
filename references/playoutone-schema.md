@@ -1,99 +1,193 @@
 # PlayoutONE Database Schema Reference
 
-Database: `PlayoutONE_Standard` (SQL Server, accessed via `sqlcmd -S localhost -d PlayoutONE_Standard -E`)
+*Updated 2026-03-30 after morning show incident*
+
+Database: `PlayoutONE_Standard`  
+Server: `localhost\p1sqlexpress`  
+Auth: `REDACTED_USER` / `PlayoutONE.`
 
 ---
 
-## Audio Table
+## Audio Table (18,108 rows — READ/WRITE)
 
-The main audio library. Stores metadata for every audio file in the system.
+The master media library. Every audio file must be registered here before it can play.
 
 ### Key Columns
 
 | Column | Type | Nullable | Notes |
 |--------|------|----------|-------|
-| **UID** | nvarchar | NOT NULL | Primary identifier for audio items |
-| **Title** | nvarchar | | Song/item title |
-| **Artist** | nvarchar | | Artist name |
-| **Filename** | nvarchar | | Path to audio file on disk |
-| **Category** | nvarchar | | Content category |
+| **UID** | nvarchar(13) | NOT NULL | Primary identifier — also the filename without extension |
+| **Title** | nvarchar(255) | | Song/item title |
+| **Artist** | nvarchar(255) | | Artist name |
+| **Filename** | nvarchar(MAX) | | Audio filename (e.g., `90001.mp3`) |
+| **Length** | int | | Duration in milliseconds |
+| **TrimOut** | int | | ⚠️ Track end point (ms). **MUST = Length. If 0 → instant-skip crash loop** |
+| **Extro** | int | | ⚠️ Crossfade start point (ms). **MUST = Length - 5000. If 0 → instant-skip** |
+| **TrimIn** | int | | Start offset (ms), usually 0 |
+| **Intro** | int | | Intro end point (where vocals start) |
+| **HookIn** / **HookOut** | int | | Hook segment markers |
+| **Type** | int | | 16=Song, 17=Production, 18=Commercial, 27=Voice |
+| **Category** | int | | Category ID (43=Other, 46=Legal ID, etc.) |
+| **Chain** | bit | | 1=auto-chain to next track |
+| **AutoDJ** | bit | | 1=available for AutoDJ selection |
+| **Deleted** | bit | | Soft delete flag |
+| **LastPlayed** | datetime | | Last played timestamp |
+| **Plays** | int | | Total play count |
 
-- **42 NOT NULL columns** total — inserting new rows requires populating all of them.
+**⚠️ CRITICAL — TrimOut and Extro markers:**
+- `TrimOut = 0` → PlayoutONE thinks the track is 0ms long → instant skip
+- `Extro = 0` → Same: engine fires end-of-track at 0ms → crash loop
+- On 60-minute files, AutoImporter fails to analyze and sets both to 0
+- **Always set manually:** `TrimOut = Length`, `Extro = Length - 5000`
+
+### Registering New Audio
+
+```sql
+SET QUOTED_IDENTIFIER ON;
+
+-- Register a morning show segment
+INSERT INTO Audio (UID, Title, Artist, Filename, Length, TrimOut, Extro, 
+                   TrimIn, Intro, HookIn, HookOut, Type, Category, Chain, AutoDJ)
+VALUES ('90001', 'Monday Morning Show Hour 1', 'Dr Johnny Fever', '90001.mp3',
+        3592000, 3592000, 3587000, 0, 0, 0, 0, 16, 43, 1, 1);
+```
+
+**42 NOT NULL columns** total — but most have defaults. The INSERT above covers the essential fields.
 
 ---
 
-## Playlists Table
+## Playlists Table (26,683 rows — ⚠️ DO NOT WRITE DIRECTLY)
 
-Holds the scheduled playout for each hour. Each row is one scheduled item.
+**The Playlists table is a LOG, not a queue.** It records what has been scheduled and played. PlayoutONE manages this table internally via AutoImporter and the playout engine.
+
+**NEVER use raw SQL INSERT/UPDATE on this table.** Use DPL files via AutoImporter instead. Raw SQL has caused two station crashes (March 20 and March 30, 2026).
 
 ### Key Columns
 
 | Column | Type | Notes |
 |--------|------|-------|
-| **GIndex** | PK | Format: `YYYYMMDDHH.NNNN` (e.g., `2026033007.0003`) |
-| **Name** | nvarchar | Playlist name, format: `YYYYMMDDHH.dpl` |
-| **AirTime** | time | Scheduled air time |
-| **Order** | float | Sort order within the hour |
-| **UID** | nvarchar | References Audio.UID |
-| **Title** | nvarchar | Song/item title |
-| **Artist** | nvarchar | Artist name |
-| **Chain** | int | 1 = chained (auto-play next), 0 = stop |
-| **Length** | float | Duration in milliseconds |
-| **Len** | float | Duration in milliseconds (duplicate) |
-| **Type** | int | Item type (see below) |
-| **SourceFile** | nvarchar | Path to audio file |
+| **ID** | int PK | Auto-increment |
+| **GIndex** | decimal UNIQUE | `YYYYMMDDHH.NNNN` — primary scheduling key |
+| **Name** | nvarchar(50) | Source DPL filename (e.g., `2026033007.dpl`) |
+| **Order** | real | Position within the hour |
+| **UID** | varchar(10) | → Audio.UID |
+| **Title** | nvarchar(600) | Track title |
+| **Artist** | nvarchar(255) | Track artist |
+| **Chain** | bit | 1=auto-chain, 0=stop |
+| **Length** | float | Duration (ms) |
+| **Type** | int | 0=START marker, 16=Song, 17=Production, 26=SOFTMARKER |
+| **SourceFile** | varchar(255) | ⚠️ **Path to audio file — MUST be populated** |
+| **Played** | bit | Has been played (managed by PlayoutONE) |
+| **Done** | bit | Finished playing (managed by PlayoutONE) |
+| **MissingAudio** | bit | Audio file not found on disk |
+| **AgentUpdate** | bit | Set to 1 for agent-modified entries (audit flag) |
+| **GptScript** | nvarchar(MAX) | AI-generated voice break scripts |
+| **Deleted** | bit | Soft-delete flag |
+| **ActualAirTime** | datetime | When it actually played |
 
-- **32 NOT NULL columns** total.
-
-### Type Values
+### Type Values (PRESERVE non-16 types)
 
 | Type | Meaning | Action |
 |------|---------|--------|
-| **0** | Marker | PRESERVE — do not modify or delete |
-| **16** | Music | Safe to repurpose/delete |
-| **17** | Station ID | PRESERVE — do not modify or delete |
-| **26** | Ad/Commercial | PRESERVE — do not modify or delete |
+| **0** | START PLAYLIST marker | ❌ NEVER modify or delete |
+| **16** | Music/Song | ✅ Safe to replace via DPL import |
+| **17** | Station ID / Liner / Production | ❌ NEVER modify or delete |
+| **26** | SOFTMARKER (hour boundary) | ❌ NEVER modify or delete |
+
+### How AutoImporter Creates Playlists Entries
+
+1. DPL file dropped in `F:\PlayoutONE\Import\Music Logs\`
+2. AutoImporter parses the tab-separated file
+3. Creates one Playlists row per line:
+   - Sets `GIndex = YYYYMMDDHH.NNNN`
+   - Sets `Name = YYYYMMDDHH.dpl`
+   - Sets `SourceFile` from the Audio table lookup
+   - Creates a `Type=0` START PLAYLIST marker as the first entry
+   - Creates a `Type=26` SOFTMARKER from the DPL command field
+4. Moves the DPL file to `\Imported\` subfolder
+5. PlayoutONE loads these entries at the top of each hour
 
 ---
 
-## Mutation Strategy
+## Settings Table (191 rows — WRITE WITH CAUTION)
 
-### UPDATE (repurpose) over INSERT
+Key-value configuration store.
 
-Because both tables have many NOT NULL columns (42 for Audio, 32 for Playlists), **UPDATE existing rows** rather than INSERT new ones. This avoids needing to supply values for every required column.
+### Critical Settings
 
-### Workflow for Replacing an Hour's Music
+| Key | Value | Meaning |
+|-----|-------|---------|
+| `TotalAutomation` | `-1` (TRUE) | Station never stops, always auto-fills |
+| `AutoFillThreshold` | `30` | Add songs when <30s of music remains |
+| `AutoFillItems` | `0` | Add unlimited items as needed |
+| `ScheduleWithClockGrid` | `1` | Use internal schedule grid |
+| `AutoOnPlay` | `1` ✅ | Start playlist 10s after startup |
+| `LastPlaylistLoadedCheck` | `1` ✅ | Auto-load next playlist when items low |
+| `AutoImporterMachine` | `P1-WPFQ-SRVS` | AutoImporter runs on this machine |
 
-1. Identify existing Type=16 (music) rows for the target hour
-2. **UPDATE** one row per new song — set UID, Title, Artist, SourceFile, Length, Len, etc.
-3. **DELETE** remaining unused Type=16 rows after repurposing what you need
-4. Leave Type=0, Type=17, and Type=26 rows untouched
+### AutoFill Behavior
 
-### Required Column Values When Updating
+AutoFill pulls songs from the **Audio table** (Type=16, not deleted, matching category rules). It does NOT read from the Playlists table. Modifying unplayed Playlists entries does not affect what AutoFill selects.
 
-```sql
-SET QUOTED_IDENTIFIER ON;
+---
 
-UPDATE Playlists SET
-    UID = @uid,
-    Title = @title,
-    Artist = @artist,
-    SourceFile = @sourcefile,
-    Length = @length_ms,
-    Len = @length_ms,
-    Chain = 1,
-    Type = 16,
-    Deleted = 0,
-    Status = 0
-WHERE GIndex = @gindex;
+## Key Paths
+
+| Path | Purpose | Notes |
+|------|---------|-------|
+| `F:\PlayoutONE\Audio\` | Audio file storage | Files named `{UID}.mp3` |
+| `F:\PlayoutONE\Import\Music Logs\` | ✅ DPL import folder | AutoImporter watches this |
+| `F:\PlayoutONE\Import\Music Logs\Imported\` | Processed DPLs | Moved here after import |
+| `C:\PlayoutONE\data\playlists\` | Local cache | ❌ NOT the import folder |
+| `C:\PlayoutONE\Modules\` | Executables | PlayoutONE.exe, ffmpeg.exe |
+
+---
+
+## DPL File Format (Music1 14-Column)
+
+Tab-separated, one track per line. End each hour with a SOFTMARKER.
+
 ```
+{UID}\tTRUE\t-1\t-1\t-2\t\tFALSE\t0\t-2\t\t\t\t\t\t{Title}|{Artist}
+\tTRUE\t-1\t-1\t-2\tSOFTMARKER {HH}:59:59\t-2\t0\t-2\t\t\t\t\t\t
+```
+
+| Col | Field | Value |
+|-----|-------|-------|
+| 1 | UID | Cart number (empty for SOFTMARKER) |
+| 2 | Chain | `TRUE` |
+| 3 | Extro | `-1` (use Audio table value) |
+| 4 | Original Extro | `-1` |
+| 5 | Fade | `-2` (use media finder setting) |
+| 6 | Command | empty or `SOFTMARKER HH:59:59` |
+| 7 | Oversweep | `FALSE` or `-2` |
+| 8 | Recon ID | `0` |
+| 9 | Unknown | `-2` |
+| 10–13 | *(empty)* | |
+| 14 | Display | `Title|Artist` |
+
+**Filename:** `YYYYMMDDHH.dpl` (e.g., `2026033105.dpl` for March 31, 5 AM)
 
 ---
 
 ## Safety Rules
 
-1. **Only modify FUTURE hours** — never touch the currently-playing or past hours
-2. **Always `SET QUOTED_IDENTIFIER ON`** before any query
-3. **Preserve protected types** — never modify or delete Type=0 (markers), Type=17 (station IDs), or Type=26 (ads)
-4. **Always set** `Chain=1`, `Type=16`, `Deleted=0`, `Status=0` on updated music rows
-5. **Validate before executing** — confirm the target hour is in the future before running any UPDATE/DELETE
+1. **NEVER raw SQL INSERT/UPDATE on Playlists** — use DPL import via AutoImporter
+2. **NEVER mass-update Played/Done flags** — empties visual playlist → dead air
+3. **NEVER modify entries for current or recent hours** — crashes the engine
+4. **NEVER set TrimOut or Extro to 0** — causes instant-skip crash loop
+5. **ALWAYS set SourceFile** in Audio table — PlayoutONE can't find files without it
+6. **ALWAYS use `F:\PlayoutONE\Import\Music Logs\`** for DPL import (not C: drive)
+7. **ALWAYS `SET QUOTED_IDENTIFIER ON`** before any SQL query
+8. **ALWAYS preserve Type 0/17/26 entries** — structural markers
+
+---
+
+## Incident History
+
+| Date | Failure | Root Cause |
+|------|---------|------------|
+| 2026-03-20 | Station crash during playlist injection | Raw SQL UPDATE on active Playlists entries |
+| 2026-03-30 | 2+ hours dead air, morning show didn't play | Extro=0 crash loop + missing SourceFile + mass Played/Done update |
+
+See: `PretoriaFields/MORNING-SHOW-INCIDENT-2026-03-30.md`

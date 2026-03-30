@@ -15,7 +15,14 @@ station:
   audio_path: 'F:\PlayoutONE\Audio'
   temp_path: 'C:\temp'
   db: PlayoutONE_Standard
-  sql_auth: integrated
+  sql_server: 'localhost\p1sqlexpress'
+  sql_user: REDACTED_USER
+  sql_pass: 'PlayoutONE.'
+  # DPL import folder — AutoImporter watches this (NOT C:\PlayoutONE\data\playlists\)
+  dpl_import_path: 'F:\PlayoutONE\Import\Music Logs'
+  dpl_imported_path: 'F:\PlayoutONE\Import\Music Logs\Imported'
+  # ffmpeg on station for remote segmentation
+  ffmpeg_path: 'C:\PlayoutONE\Modules\ffmpeg.exe'
 
 # --- Audio processing ---
 audio:
@@ -27,6 +34,9 @@ audio:
   preview_bitrate: 128k
   format: mp3
   ffmpeg_filter: 'loudnorm=I=-16:TP=-1.5:LRA=11'
+  # Segment settings (avoid Extro=0 on large files)
+  max_segment_minutes: 10
+  segment_crossfade_ms: 5000
 
 # --- Show schedule ---
 show:
@@ -39,6 +49,19 @@ show:
     - friday
   persona: dr-johnny-fever
   timezone: America/New_York
+
+# --- Publish safety ---
+publish:
+  # Method: dpl (safe) or sql (DEPRECATED — causes crashes)
+  method: dpl
+  # Minimum minutes before target hour to allow publish
+  min_lead_time_minutes: 30
+  # DPL format: music1 (14-column) — matches Music1 output exactly
+  dpl_format: music1
+  # Audio table markers
+  extro_offset_ms: 5000
+  # UID scheme: 901{hour}{segment} (e.g., 90151 = hour 5, segment 1)
+  uid_prefix: '901'
 
 # --- Delivery / notifications ---
 delivery:
