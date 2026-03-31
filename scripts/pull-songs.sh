@@ -15,10 +15,17 @@ warn()  { echo -e "${YELLOW}[pull-songs]${RESET} $*" >&2; }
 error() { echo -e "${RED}[pull-songs]${RESET} $*" >&2; }
 ok()    { echo -e "${GREEN}[pull-songs]${RESET} $*" >&2; }
 
+# SSH routing: djjarvis machine → SuperServer → station
+# If p1-wpfq-srvs is reachable directly, use it. Otherwise proxy via super.
 SSH_HOST="p1-wpfq-srvs"
+SSH_PROXY="super"  # SuperServer hop if direct SSH fails
 DB="PlayoutONE_Standard"
 REMOTE_AUDIO_DIR='F:\\PlayoutONE\\Audio'
 REMOTE_QUERY_FILE='C:\\temp\\query.sql'
+
+# SSH routing: always proxy via SuperServer (super) to reach station
+USE_PROXY=true
+log "Routing: ${SSH_PROXY} -> ${SSH_HOST}"
 
 usage() {
   cat >&2 <<'EOF'
@@ -32,15 +39,10 @@ Usage:
   pull-songs.sh --songs 'Eric Clapton - Cocaine, Pearl Jam - Black' --output-dir <dir>
       Search by "Artist - Title" pairs, download best matches. Outputs JSON manifest.
 
-  pull-songs.sh --from-scripts <dir> --output-dir <dir>
-      Parse [SONG: Artist - Title] markers from script .md files in <dir>.
-      Extracts all unique songs and downloads them.
-
 Options:
   --uids <csv>         Comma-separated PlayoutONE UIDs
   --search <term>      Search artist/title (list only, no download)
   --songs <csv>        Comma-separated "Artist - Title" pairs
-  --from-scripts <dir> Parse [SONG:] markers from .md files in directory
   --output-dir <dir>   Local directory for downloaded files
   --help               Show this help
 EOF
@@ -52,46 +54,21 @@ MODE=""
 UIDS=""
 SEARCH_TERM=""
 SONGS=""
-SCRIPTS_DIR=""
 OUTPUT_DIR=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --help)      usage ;;
-    --uids)         MODE="uids";    UIDS="$2";         shift 2 ;;
-    --search)       MODE="search";  SEARCH_TERM="$2";  shift 2 ;;
-    --songs)        MODE="songs";   SONGS="$2";        shift 2 ;;
-    --from-scripts) MODE="scripts"; SCRIPTS_DIR="$2";  shift 2 ;;
-    --output-dir)   OUTPUT_DIR="$2"; shift 2 ;;
+    --uids)      MODE="uids";   UIDS="$2";        shift 2 ;;
+    --search)    MODE="search";  SEARCH_TERM="$2"; shift 2 ;;
+    --songs)     MODE="songs";   SONGS="$2";       shift 2 ;;
+    --output-dir) OUTPUT_DIR="$2"; shift 2 ;;
     *) error "Unknown option: $1"; usage ;;
   esac
 done
 
-# --- from-scripts: parse [SONG: Artist - Title] markers ---
-if [[ "$MODE" == "scripts" ]]; then
-  if [[ -z "$SCRIPTS_DIR" || ! -d "$SCRIPTS_DIR" ]]; then
-    error "Scripts directory not found: $SCRIPTS_DIR"
-    exit 1
-  fi
-  log "Parsing [SONG:] markers from $SCRIPTS_DIR/*.md"
-  PARSED_SONGS=$(grep -roh '\[SONG: [^]]*\]' "$SCRIPTS_DIR"/*.md 2>/dev/null \
-    | sed 's/\[SONG: //; s/\]//' \
-    | sort -u \
-    | paste -sd ',' -)
-  if [[ -z "$PARSED_SONGS" ]]; then
-    error "No [SONG: Artist - Title] markers found in scripts"
-    exit 1
-  fi
-  count=$(echo "$PARSED_SONGS" | tr ',' '\n' | wc -l)
-  log "Found $count unique songs"
-  echo "$PARSED_SONGS" | tr ',' '\n' >&2
-  # Switch to songs mode with the parsed list
-  MODE="songs"
-  SONGS="$PARSED_SONGS"
-fi
-
 if [[ -z "$MODE" ]]; then
-  error "One of --uids, --search, --songs, or --from-scripts is required."
+  error "One of --uids, --search, or --songs is required."
   usage
 fi
 
@@ -101,16 +78,19 @@ if [[ "$MODE" != "search" && -z "$OUTPUT_DIR" ]]; then
 fi
 
 # --- helpers ---
-trim() { local s="$*"; s="${s#"${s%%[![:space:]]*}"}"; s="${s%"${s##*[![:space:]]}"}"; echo "$s"; }
 
 # Run a SQL query on the remote PlayoutONE server.
 # Writes SQL to a temp file on the Windows box to avoid shell-escaping issues.
 run_sql() {
   local sql="$1"
-  echo "$sql" > "/tmp/query_$$.sql"
-  scp -q "/tmp/query_$$.sql" "$SSH_HOST:C:/temp/query.sql"
-  ssh "$SSH_HOST" "sqlcmd -S localhost -d $DB -E -W -h -1 -s \"|\" -i C:\\temp\\query.sql"
-  rm -f "/tmp/query_$$.sql"
+  # Route: djjarvis -> super -> p1-wpfq-srvs
+  # Write SQL to temp file, copy to station, run sqlcmd
+  local tmplocal
+  tmplocal=$(mktemp /tmp/pf_XXXX.sql)
+  printf '%s' "$sql" > "$tmplocal"
+  scp -q "$tmplocal" "super:/tmp/pf_q.sql" 2>/dev/null
+  rm -f "$tmplocal"
+  ssh super 'scp -q /tmp/pf_q.sql p1-wpfq-srvs:C:/temp/query.sql && ssh p1-wpfq-srvs "sqlcmd -S localhost -d PlayoutONE_Standard -E -W -h -1 -s \"|\" -i C:\temp\query.sql"'
 }
 
 # Get duration in ms via ffprobe (returns empty string if unavailable)
@@ -142,7 +122,7 @@ download_file() {
     local remote_file="${REMOTE_AUDIO_DIR}\\${stem}.${ext}"
     local local_file="${dest_dir}/${stem}.${ext}"
     log "Trying ${stem}.${ext} ..."
-    if ssh "$SSH_HOST" "type \"${remote_file}\"" > "$local_file" 2>/dev/null; then
+    if ssh "$SSH_PROXY" "ssh $SSH_HOST \"type '${remote_file}'\""  > "$local_file" 2>/dev/null; then
       if [[ -s "$local_file" ]]; then
         ok "Downloaded ${stem}.${ext}"
         local_path="$local_file"
@@ -162,7 +142,7 @@ download_file() {
 do_search() {
   local term="$1"
   log "Searching for: ${term}"
-  local sql="SELECT UID, Title, Artist, Filename FROM Audio WHERE Artist LIKE ''%${term}%'' OR Title LIKE ''%${term}%''"
+  local sql="SELECT UID, Title, Artist, Filename FROM Audio WHERE Artist LIKE '%${term}%' OR Title LIKE '%${term}%'"
   local results
   results=$(run_sql "$sql") || { error "SQL query failed"; exit 1; }
 
@@ -178,10 +158,10 @@ do_search() {
 
   while IFS='|' read -r uid title artist filename; do
     # Trim whitespace
-    uid=$(trim "$uid")
-    title=$(trim "$title")
-    artist=$(trim "$artist")
-    filename=$(trim "$filename")
+    uid=$(echo "$uid" | xargs)
+    title=$(echo "$title" | xargs)
+    artist=$(echo "$artist" | xargs)
+    filename=$(echo "$filename" | xargs)
     [[ -z "$uid" ]] && continue
     printf "%-8s %-30s %-30s %-40s\n" "$uid" "$artist" "$title" "$filename" >&2
   done <<< "$results"
@@ -196,7 +176,7 @@ do_uids() {
   IFS=',' read -ra uid_arr <<< "$uid_csv"
   local uid_list=""
   for u in "${uid_arr[@]}"; do
-    u=$(trim "$u")
+    u=$(echo "$u" | xargs)
     [[ -n "$uid_list" ]] && uid_list="${uid_list},"
     uid_list="${uid_list}${u}"
   done
@@ -215,10 +195,10 @@ do_uids() {
   local first=true
 
   while IFS='|' read -r uid title artist filename; do
-    uid=$(trim "$uid")
-    title=$(trim "$title")
-    artist=$(trim "$artist")
-    filename=$(trim "$filename")
+    uid=$(echo "$uid" | xargs)
+    title=$(echo "$title" | xargs)
+    artist=$(echo "$artist" | xargs)
+    filename=$(echo "$filename" | xargs)
     [[ -z "$uid" ]] && continue
 
     log "Downloading UID ${uid}: ${artist} - ${title}"
@@ -260,39 +240,37 @@ do_songs() {
 
   IFS=',' read -ra song_arr <<< "$songs_csv"
   for entry in "${song_arr[@]}"; do
-    entry=$(trim "$entry")
+    entry=$(echo "$entry" | xargs)
     # Split on " - "
     local artist="${entry%% - *}"
     local title="${entry#* - }"
-    artist=$(trim "$artist")
-    title=$(trim "$title")
+    artist=$(echo "$artist" | xargs)
+    title=$(echo "$title" | xargs)
 
     if [[ -z "$artist" || -z "$title" ]]; then
       warn "Skipping malformed entry: '${entry}'"
       continue
     fi
 
-    local artist_esc="${artist//\'/\'\'}"
-    local title_esc="${title//\'/\'\'}"
-
     log "Searching: ${artist} - ${title}"
-    local sql="SET NOCOUNT ON; SELECT TOP 1 UID, Title, Artist, Filename FROM Audio WHERE Artist LIKE '%${artist_esc}%' AND Title LIKE '%${title_esc}%'"
+    local sql="SELECT TOP 1 UID, Title, Artist, Filename FROM Audio WHERE Artist LIKE '%${artist}%' AND Title LIKE '%${title}%'"
     local result
-    result=$(run_sql "$sql" | grep "|" | head -1 || true)
+    result=$(run_sql "$sql") || { warn "SQL failed for: ${artist} - ${title}"; continue; }
 
     if [[ -z "$result" ]]; then
       warn "No match for: ${artist} - ${title}"
       continue
     fi
 
+    # Take first line of results
+    local line
+    line=$(echo "$result" | head -1)
     local uid title_db artist_db filename
-    IFS='|' read -r uid title_db artist_db filename <<< "$result"
-    
-    # Strip whitespace without xargs (avoids quote errors)
-    uid="${uid#"${uid%%[![:space:]]*}"}"; uid="${uid%"${uid##*[![:space:]]}"}"
-    title_db="${title_db#"${title_db%%[![:space:]]*}"}"; title_db="${title_db%"${title_db##*[![:space:]]}"}"
-    artist_db="${artist_db#"${artist_db%%[![:space:]]*}"}"; artist_db="${artist_db%"${artist_db##*[![:space:]]}"}"
-    filename="${filename#"${filename%%[![:space:]]*}"}"; filename="${filename%"${filename##*[![:space:]]}"}"
+    IFS='|' read -r uid title_db artist_db filename <<< "$line"
+    uid=$(echo "$uid" | xargs)
+    title_db=$(echo "$title_db" | xargs)
+    artist_db=$(echo "$artist_db" | xargs)
+    filename=$(echo "$filename" | xargs)
 
     ok "Found UID ${uid}: ${artist_db} - ${title_db}"
     local local_path

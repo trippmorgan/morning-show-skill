@@ -96,21 +96,3 @@ Alt-rock, grunge, 90s rock. Think flannel and coffee. Soundgarden, Alice in Chai
 | 8:45 | **Song block** | 2 songs. |
 | 8:54 | **Close** | "That's the Monday show. Go make it count — or at least make it through. Pretoria Fields Brewery is waiting for the weekend. Grunge Wednesday with Tripp, Wednesday 5 to 8. I'm Dr. Johnny Fever, this is WPFQ 96.7, Pretoria Fields Radio. Get out there." |
 | 8:56 | **Song block** | 1 song — closer. Something that says "okay, fine, Monday, let's do this." |
-
----
-
-## CRITICAL: Song Markers
-
-Every song block in the schedule MUST be written as explicit `[SONG: Artist - Title]` markers.
-These are machine-parsed. The pipeline will fail without them.
-
-Example:
-```
-### SEGMENT 2: SONG BLOCK
-[SONG: Pearl Jam - Black]
-[SONG: Soundgarden - Black Hole Sun]
-[SONG: Alice in Chains - Down in a Hole]
-```
-
-Songs MUST exist in the PlayoutONE database. Stick to well-known tracks from the genre guidance.
-Each hour needs 8-12 songs total, distributed across 3-4 song blocks.

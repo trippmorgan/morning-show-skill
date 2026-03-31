@@ -96,21 +96,3 @@ Upbeat rock, new wave, indie rock. The Killers, Talking Heads, The Cars, Blondie
 | 8:45 | **Song block** | 2 songs. |
 | 8:54 | **Close** | "Thursday — done. Tomorrow's Friday and we're gonna celebrate it. Throwback Country Sunday with Todd Fox, 4:30 to 8. Hit up Pretoria Fields Brewery this weekend — you've earned it. I'm Dr. Johnny Fever. WPFQ 96.7, Pretoria Fields Radio. See you tomorrow for the big one." |
 | 8:56 | **Song** | 1 closer — something that says "tomorrow is gonna be good." |
-
----
-
-## CRITICAL: Song Markers
-
-Every song block in the schedule MUST be written as explicit `[SONG: Artist - Title]` markers.
-These are machine-parsed. The pipeline will fail without them.
-
-Example:
-```
-### SEGMENT 2: SONG BLOCK
-[SONG: Pearl Jam - Black]
-[SONG: Soundgarden - Black Hole Sun]
-[SONG: Alice in Chains - Down in a Hole]
-```
-
-Songs MUST exist in the PlayoutONE database. Stick to well-known tracks from the genre guidance.
-Each hour needs 8-12 songs total, distributed across 3-4 song blocks.

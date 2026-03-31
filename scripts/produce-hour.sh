@@ -1,21 +1,4 @@
 #!/usr/bin/env bash
-# produce-hour.sh — Interleave talk segments with music to build a complete hour block
-#
-# Part of the WPFQ Morning Show pipeline (step 6 of 8).
-# Takes rendered voice segments + pulled song files and concatenates them
-# into a single normalized MP3 per hour.
-#
-# Process:
-#   1. Read manifest.json to get segment order (talk + music interleaved)
-#   2. Normalize each input to -16 LUFS (broadcast standard) via ffmpeg loudnorm
-#   3. Build ffmpeg concat file with all segments in order
-#   4. Concatenate into MORNING-SHOW-H{N}.mp3 (192kbps, 44.1kHz, stereo)
-#
-# Input:  voice/*.mp3 (rendered talk), songs/*.mp3 (pulled from station)
-# Output: audio/MORNING-SHOW-H{N}.mp3
-#
-# Called by: build-show.sh --step produce
-# Depends on: ffmpeg, ffprobe
 set -euo pipefail
 
 # --- Colors ---

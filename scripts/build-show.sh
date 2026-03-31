@@ -240,9 +240,11 @@ extract_segments_from_script() {
 # --- Helper: extract song list from hour script ---
 extract_songs_from_script() {
   local script_file="$1"
-  # Primary format: [SONG: Artist - Title]
-  grep -oP '(?<=\[SONG: )[^\]]+' "$script_file" 2>/dev/null || true
-  # Fallback: [SONG] Artist - Title
+  # Look for lines like: Artist - Title, or | Song | Artist - Title |
+  # Common patterns: "Song block" rows with artist/title in notes
+  grep -oP '(?<=\| )[\w\s]+\s*[-–]\s*[\w\s]+(?= \|)' "$script_file" 2>/dev/null || true
+  grep -oP '(?<=🎵\s).*$' "$script_file" 2>/dev/null || true
+  # Also look for [SONG] markers
   grep -oP '(?<=\[SONG\]\s?).*$' "$script_file" 2>/dev/null || true
 }
 
@@ -328,14 +330,29 @@ fi
 # ── Step 5: Pull songs ───────────────────────────────────────────────────
 if should_run pull; then
   log "Step 5/8 — Pulling songs from PlayoutONE"
-  # Use --from-scripts to parse [SONG: Artist - Title] markers
-  "$SCRIPT_DIR/pull-songs.sh" \
-    --from-scripts "$SCRIPTS_DIR" \
-    --output-dir "$SONGS_DIR" \
-    $DRY_RUN_FLAG \
-    > "$SHOW_DIR/songs-manifest.json" || {
-    warn "Song pull failed or no [SONG:] markers found"
-  }
+  # Collect all song references from scripts
+  all_songs=""
+  for f in "$SCRIPTS_DIR"/*.md; do
+    [[ -f "$f" ]] || continue
+    songs=$(extract_songs_from_script "$f")
+    if [[ -n "$songs" ]]; then
+      all_songs+="$songs"$'\n'
+    fi
+  done
+
+  if [[ -n "$all_songs" ]]; then
+    # Deduplicate and join as CSV
+    song_csv=$(echo "$all_songs" | sort -u | sed '/^$/d' | paste -sd ',' -)
+    "$SCRIPT_DIR/pull-songs.sh" \
+      --songs "$song_csv" \
+      --output-dir "$SONGS_DIR" \
+      $DRY_RUN_FLAG \
+      > "$SHOW_DIR/songs-manifest.json"
+    song_count=$(echo "$all_songs" | sort -u | sed '/^$/d' | wc -l)
+    log "Pulled $song_count songs to $SONGS_DIR/"
+  else
+    warn "No songs extracted from scripts — skipping pull"
+  fi
   mark_step pull
 fi
 

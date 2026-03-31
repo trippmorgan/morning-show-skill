@@ -1,18 +1,4 @@
 #!/usr/bin/env bash
-# write-scripts.sh — Generate talk segment scripts via Claude Code CLI
-#
-# Part of the WPFQ Morning Show pipeline (step 3 of 8).
-# Uses an LLM to write Johnny Fever-style talk segments for each hour,
-# incorporating research data (weather, history, birthdays) and the
-# day template (recurring features like Deep Cut Tuesday, Guitar God Spotlight).
-#
-# Segments are written as markdown with [SONG:Artist - Title] markers
-# between talk blocks so downstream steps know where to interleave music.
-#
-# Output: scripts/hour-{N}.md per hour
-#
-# Called by: build-show.sh --step write
-# Depends on: claude CLI (Anthropic)
 set -euo pipefail
 
 # --- Colors ---
@@ -181,25 +167,39 @@ You are a radio script writer for WPFQ 96.7, Pretoria Fields Radio in Albany, GA
 Write four complete hour-by-hour morning show scripts for ${R_DAY:-$DAY}, ${SHOW_DATE}.
 Output exactly 4 files worth of content, clearly separated. Each hour script must be a complete, ready-to-read radio script.
 
-# OUTPUT FORMAT
-Output all four hours in a single response. Separate each hour with this exact delimiter on its own line:
+# OUTPUT FORMAT — FOLLOW EXACTLY
+You must output exactly 4 complete radio scripts, one per hour.
+Each script must contain the full spoken-word text for every segment.
+
+Separate hours with EXACTLY this line (nothing else on the line):
 ===HOUR_BREAK===
 
-Each hour script must follow this structure:
-- Start with a YAML-style header: Hour number, time slot, energy level, title
-- Use segment markers exactly like: ### SEGMENT 1: THE OPEN, ### SEGMENT 2: WEATHER, etc.
-- Every spoken word should be written out as the DJ would say it (no placeholders, no bracketed instructions)
-- Song blocks MUST use explicit machine-readable markers, one per line:
-  [SONG: Artist - Title]
-  Example:
-  ### SONG BLOCK
-  [SONG: Pearl Jam - Black]
-  [SONG: Soundgarden - Black Hole Sun]
-  [SONG: Alice in Chains - Down in a Hole]
-- These markers are parsed by automation. Do NOT write "here is some music" without a [SONG:] marker
-- Every song block needs 2-4 [SONG:] markers. Each hour needs 8-12 songs total
-- Pick songs that actually exist — well-known tracks from established artists in the genre
-- Promos and cross-promotions should be written out as spoken word
+Do NOT write summaries, outlines, or descriptions. Write the ACTUAL WORDS the DJ says.
+
+Each hour script structure:
+---
+## HOUR {N} — {TIME SLOT} — {TITLE}
+**Energy:** {energy level}
+
+### SEGMENT: THE OPEN
+[Write every word Dr. Johnny Fever says — ~45 seconds of spoken dialogue]
+
+### SONG BLOCK
+[3 songs — list artist and title]
+
+### SEGMENT: MUSIC HISTORY (or WEATHER or RANT or QUICK HITS depending on hour structure)
+[Write every word — ~60 seconds for history/rant, ~25 seconds for weather]
+
+### SONG BLOCK
+[more songs]
+
+[...continue through all segments per the day template...]
+
+### CLOSE
+[Write every word — ~25 seconds]
+---
+
+The scripts are for voice synthesis. Every word must be written out. No placeholders.
 
 # PERSONA
 ${PERSONA_CONTENT}
@@ -228,10 +228,6 @@ ${RESEARCH_CONTENT}
 8. Keep rants to ~60 seconds of spoken word, opens to ~45 seconds, weather to ~25 seconds, closes to ~25 seconds
 9. "Booker out" is ONLY used in the Hour 4 show close — never before
 10. NEVER break the fourth wall about being AI. Dr. Johnny Fever IS the DJ. Period.
-11. EVERY song block MUST contain [SONG: Artist - Title] markers — one per line, exactly that format
-12. Each hour must have 8-12 [SONG:] markers total, distributed across 3-4 song blocks
-13. Songs must be well-known tracks that would exist in a classic/alt/indie rock radio station library
-14. After each talk segment that transitions to music, end with a natural segue AND the [SONG:] markers
 PROMPT_EOF
 )"
 
@@ -242,53 +238,46 @@ if [[ "$PROMPT_ONLY" == true ]]; then
   exit 0
 fi
 
-# Call claude CLI
+# Call claude CLI once per hour (more reliable than single large call)
 mkdir -p "$OUTPUT_DIR"
-log "Calling claude to generate scripts..."
-
-RAW_OUTPUT=$(claude --permission-mode bypassPermissions --print "$PROMPT" 2>/dev/null)
-
-if [[ -z "$RAW_OUTPUT" ]]; then
-  err "claude returned empty output"
-  exit 1
-fi
-
-# --- Split into hour files ---
-log "Splitting output into hour files..."
-
-TMPDIR_WORK="$(mktemp -d)"
-trap 'rm -rf "$TMPDIR_WORK"' EXIT
-
-echo "$RAW_OUTPUT" > "$TMPDIR_WORK/raw.md"
-
-# Split on ===HOUR_BREAK===
-awk -v outdir="$TMPDIR_WORK" '
-  BEGIN { file = 1 }
-  /^===HOUR_BREAK===$/ { file++; next }
-  { print >> (outdir "/hour" file ".md") }
-' "$TMPDIR_WORK/raw.md"
-
 WRITTEN=0
+
+# Hour time slots and energy levels
+declare -A HOUR_TIME=( [1]="5:00-6:00 AM" [2]="6:00-7:00 AM" [3]="7:00-8:00 AM" [4]="8:00-9:00 AM" )
+declare -A HOUR_ENERGY=( [1]="Low and grumbly — barely awake, maximum sarcasm" [2]="Warming up — coffee kicking in, sharper takes" [3]="PEAK — drive time, on fire, best bits" [4]="Cruising — settled, warm, winding down" )
+
 for N in 1 2 3 4; do
-  SRC="$TMPDIR_WORK/hour${N}.md"
+  log "Generating Hour ${N}/4..."
   DEST="${OUTPUT_DIR%/}/HOUR${N}-${DAY_UPPER}-${SHOW_DATE}.md"
 
-  if [[ -f "$SRC" ]] && [[ -s "$SRC" ]]; then
-    # Trim leading blank lines
-    sed '/./,$!d' "$SRC" > "$DEST"
-    lines=$(wc -l < "$DEST")
-    info "  HOUR${N}-${DAY_UPPER}-${SHOW_DATE}.md (${lines} lines)"
-    WRITTEN=$((WRITTEN + 1))
-  else
-    warn "  Hour ${N}: no content generated"
+  HOUR_PROMPT="$(cat <<HOUREOF
+${PROMPT}
+
+# IMPORTANT — WRITE HOUR ${N} ONLY
+You are writing HOUR ${N} of 4 (${HOUR_TIME[$N]}).
+Energy level: ${HOUR_ENERGY[$N]}
+
+Output ONLY the script for Hour ${N}. Do not write summaries, do not write all 4 hours.
+Write the complete spoken-word script for Hour ${N} only.
+Start immediately with the script content — no preamble.
+HOUREOF
+)"
+
+  HOUR_OUTPUT=$(echo "$HOUR_PROMPT" | claude --permission-mode bypassPermissions --print 2>/dev/null || true)
+
+  if [[ -z "$HOUR_OUTPUT" ]]; then
+    warn "Hour ${N}: claude returned empty output"
+    continue
   fi
+
+  echo "$HOUR_OUTPUT" > "$DEST"
+  lines=$(wc -l < "$DEST")
+  info "  HOUR${N}-${DAY_UPPER}-${SHOW_DATE}.md (${lines} lines)"
+  WRITTEN=$((WRITTEN + 1))
 done
 
 if [[ $WRITTEN -eq 0 ]]; then
-  err "No hour scripts were generated. Raw output saved to: $TMPDIR_WORK/raw.md"
-  # Copy raw output to output dir for debugging
-  cp "$TMPDIR_WORK/raw.md" "${OUTPUT_DIR%/}/RAW-OUTPUT.md"
-  warn "Raw LLM output saved to: ${OUTPUT_DIR%/}/RAW-OUTPUT.md"
+  err "No hour scripts were generated."
   exit 1
 fi
 

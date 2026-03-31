@@ -1,15 +1,4 @@
 #!/usr/bin/env bash
-# research-date.sh — Gather date-specific content for morning show scripts
-#
-# Part of the WPFQ Morning Show pipeline (step 2 of 8).
-# Fetches weather (Open-Meteo), "this day in history" events,
-# celebrity birthdays, trending topics, and other date-relevant material
-# that the script writer can weave into talk segments.
-#
-# Output: research/{date}-research.json in the show directory
-#
-# Called by: build-show.sh --step research
-# Depends on: curl, jq
 set -euo pipefail
 
 # --- Colors (stderr only) ---

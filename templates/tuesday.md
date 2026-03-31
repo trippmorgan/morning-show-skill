@@ -96,21 +96,3 @@ Classic rock, blues rock. Zeppelin, Hendrix, Clapton, Stevie Ray Vaughan, Black 
 | 8:45 | **Song block** | 2 songs. |
 | 8:54 | **Close** | "That's Tuesday. You found the groove. Keep it. Grunge Wednesday tomorrow with Tripp at 5. Swing by Pretoria Fields Brewery if the week's treating you right. I'm Dr. Johnny Fever. WPFQ 96.7, Pretoria Fields Radio." |
 | 8:56 | **Song** | 1 closer — smooth, confident, out. |
-
----
-
-## CRITICAL: Song Markers
-
-Every song block in the schedule MUST be written as explicit `[SONG: Artist - Title]` markers.
-These are machine-parsed. The pipeline will fail without them.
-
-Example:
-```
-### SEGMENT 2: SONG BLOCK
-[SONG: Pearl Jam - Black]
-[SONG: Soundgarden - Black Hole Sun]
-[SONG: Alice in Chains - Down in a Hole]
-```
-
-Songs MUST exist in the PlayoutONE database. Stick to well-known tracks from the genre guidance.
-Each hour needs 8-12 songs total, distributed across 3-4 song blocks.
