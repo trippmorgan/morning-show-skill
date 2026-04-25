@@ -23,6 +23,179 @@ err()    { echo -e "${RED}[build]${RESET} $*" >&2; }
 info()   { echo -e "${CYAN}[build]${RESET} $*" >&2; }
 banner() { echo -e "${BOLD}${CYAN}$*${RESET}" >&2; }
 
+# ============================================================================
+# WEEK MODE — Wave 3 Task 19
+# ----------------------------------------------------------------------------
+# Invocation:   build-show.sh week <YYYY-MM-DD>   (must be a Monday)
+# Behavior:     Builds 5 shows (Mon-Tue-Wed-Thu-Fri) with a per-day
+#               ELEVENLABS_CAP_USD=5.00 envelope.  Continue on failure: a
+#               failed day does NOT abort the week.
+# Env-var hooks (test-only):
+#   BUILD_SHOW_DRY_RUN=1                  Don't invoke the per-day pipeline;
+#                                         just print what would run.
+#   BUILD_SHOW_MOCK_DAY_FAIL=YYYY-MM-DD   Force the per-day run for that date
+#                                         to return non-zero (cap-hit sim).
+# ============================================================================
+run_week() {
+  local monday="$1"
+  if [[ -z "$monday" ]]; then
+    err "week mode requires a date: build-show.sh week <YYYY-MM-DD>"
+    exit 1
+  fi
+  if ! [[ "$monday" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
+    err "Invalid date format: $monday (expected YYYY-MM-DD)"
+    exit 1
+  fi
+  # date -d %u: 1=Mon ... 7=Sun
+  local dow
+  dow=$(date -d "$monday" +%u 2>/dev/null) || {
+    err "Invalid date: $monday"
+    exit 1
+  }
+  if [[ "$dow" != "1" ]]; then
+    err "Week mode start date must be a Monday (got $monday, day-of-week=$dow)."
+    err "Try: build-show.sh week \$(date -d 'next monday' +%Y-%m-%d)"
+    exit 1
+  fi
+
+  local self="${BASH_SOURCE[0]}"
+  local dry_run="${BUILD_SHOW_DRY_RUN:-0}"
+  local mock_fail="${BUILD_SHOW_MOCK_DAY_FAIL:-}"
+
+  banner "
+╔═══════════════════════════════════════════════════════════════╗
+║        Morning Show Builder — WEEK MODE                       ║
+║        WPFQ 96.7 / Pretoria Fields Radio                      ║
+╚═══════════════════════════════════════════════════════════════╝"
+
+  local friday
+  friday=$(date -d "$monday +4 days" +%Y-%m-%d)
+  info "Week range: $monday → $friday (Mon-Fri)"
+  [[ "$dry_run" == "1" ]] && warn "BUILD_SHOW_DRY_RUN=1 — planning only, no per-day execution."
+  [[ -n "$mock_fail" ]]   && warn "BUILD_SHOW_MOCK_DAY_FAIL=$mock_fail — that day will be forced to fail."
+  echo "" >&2
+
+  # Per-day result tracking (parallel arrays, indexed 0..4)
+  local -a WEEK_DATES=()
+  local -a WEEK_LABELS=(Mon Tue Wed Thu Fri)
+  local -a WEEK_STATUS=()   # built|aborted|failed
+  local -a WEEK_NOTE=()     # cost or error summary
+  local total_built=0
+
+  local i
+  for i in 0 1 2 3 4; do
+    local d
+    d=$(date -d "$monday +${i} days" +%Y-%m-%d)
+    WEEK_DATES[$i]="$d"
+    local label="${WEEK_LABELS[$i]}"
+    local cap="5.00"
+
+    banner "── Day $((i+1))/5: ${label} ${d} (cap=\$${cap}) ──"
+
+    if [[ "$dry_run" == "1" ]]; then
+      info "[plan] ELEVENLABS_CAP_USD=$cap $self --date $d --auto-approve"
+      if [[ -n "$mock_fail" && "$d" == "$mock_fail" ]]; then
+        warn "[mock] ${label} ${d} forced fail (cap exceeded simulation)"
+        WEEK_STATUS[$i]="aborted"
+        WEEK_NOTE[$i]="aborted (mock cap exceeded)"
+      else
+        WEEK_STATUS[$i]="built"
+        WEEK_NOTE[$i]="planned (dry-run)"
+        total_built=$((total_built + 1))
+      fi
+      continue
+    fi
+
+    # Real per-day invocation.  Continue on failure — Wave 1 lesson.
+    set +e
+    ELEVENLABS_CAP_USD="$cap" "$self" \
+        --date "$d" \
+        --auto-approve \
+        < /dev/null
+    local rc=$?
+    set -e
+
+    if (( rc == 0 )); then
+      WEEK_STATUS[$i]="built"
+      # Try to read total cost from the day's ledger (best-effort)
+      local ledger="$PROJECT_DIR/shows/$d/elevenlabs-ledger.json"
+      local cost=""
+      if [[ -f "$ledger" ]]; then
+        cost=$(python3 -c "import json;print(json.load(open('$ledger')).get('total_cost_usd',''))" 2>/dev/null || true)
+      fi
+      if [[ -n "$cost" ]]; then
+        WEEK_NOTE[$i]="built (\$${cost})"
+      else
+        WEEK_NOTE[$i]="built"
+      fi
+      total_built=$((total_built + 1))
+    else
+      WEEK_STATUS[$i]="failed"
+      # Try to read ledger for cap-exceeded diagnostics
+      local ledger="$PROJECT_DIR/shows/$d/elevenlabs-ledger.json"
+      if [[ -f "$ledger" ]]; then
+        local lstatus lcost
+        lstatus=$(python3 -c "import json;print(json.load(open('$ledger')).get('status',''))" 2>/dev/null || true)
+        lcost=$(python3 -c "import json;print(json.load(open('$ledger')).get('total_cost_usd',''))" 2>/dev/null || true)
+        if [[ "$lstatus" == "aborted_cap_exceeded" ]]; then
+          WEEK_STATUS[$i]="aborted"
+          WEEK_NOTE[$i]="aborted (cap exceeded, \$${lcost})"
+        else
+          WEEK_NOTE[$i]="failed (rc=$rc, status=$lstatus)"
+        fi
+      else
+        WEEK_NOTE[$i]="failed (rc=$rc)"
+      fi
+      warn "Day ${label} ${d} did not complete: ${WEEK_NOTE[$i]} — continuing."
+    fi
+  done
+
+  # ── End-of-week Telegram-friendly summary ──────────────────────────────
+  echo "" >&2
+  banner "╔═══════════════════════════════════════════════════════════════╗"
+  banner "║  WEEK BUILD COMPLETE                                         ║"
+  banner "╚═══════════════════════════════════════════════════════════════╝"
+
+  # Compute total spend across days that have a ledger
+  local total_spend="0.00"
+  for i in 0 1 2 3 4; do
+    local d="${WEEK_DATES[$i]}"
+    local ledger="$PROJECT_DIR/shows/$d/elevenlabs-ledger.json"
+    if [[ -f "$ledger" ]]; then
+      local c
+      c=$(python3 -c "import json;print(json.load(open('$ledger')).get('total_cost_usd',0))" 2>/dev/null || echo 0)
+      total_spend=$(python3 -c "print(f'{float(\"$total_spend\") + float(\"$c\"):.2f}')")
+    fi
+  done
+
+  # Print summary block to BOTH stdout (Telegram-friendly) and stderr (human log)
+  {
+    echo "Week build complete (${monday} → ${friday}):"
+    for i in 0 1 2 3 4; do
+      local mark="✅"
+      local status="${WEEK_STATUS[$i]}"
+      [[ "$status" != "built" ]] && mark="❌"
+      echo "${mark} ${WEEK_LABELS[$i]} ${WEEK_DATES[$i]}: ${WEEK_NOTE[$i]}"
+    done
+    echo "Total spend: \$${total_spend} (${total_built}/5 days complete)"
+  } | tee /dev/stderr
+
+  # Exit 0 unless ALL five days failed (graceful degradation).
+  if (( total_built == 0 )); then
+    return 1
+  fi
+  return 0
+}
+
+# ============================================================================
+# Subcommand dispatch — single-day path is the default (unchanged).
+# ============================================================================
+if [[ "${1:-}" == "week" ]]; then
+  shift
+  run_week "${1:-}"
+  exit $?
+fi
+
 usage() {
   cat >&2 <<'EOF'
 Usage: build-show.sh [OPTIONS]
