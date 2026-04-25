@@ -565,10 +565,13 @@ fi
 # ── Step 8: Publish ──────────────────────────────────────────────────────
 if should_run publish; then
   log "Step 8/8 — Publishing to station"
+  PUBLISH_AUTO_APPROVE_FLAG=""
+  [[ "$AUTO_APPROVE" == true ]] && PUBLISH_AUTO_APPROVE_FLAG="--auto-approve"
   "$SCRIPT_DIR/publish.sh" \
     --date "$DATE" \
     --audio-dir "$AUDIO_DIR" \
-    $DRY_RUN_FLAG
+    $DRY_RUN_FLAG \
+    $PUBLISH_AUTO_APPROVE_FLAG
   log "Published!"
   mark_step publish
 fi
