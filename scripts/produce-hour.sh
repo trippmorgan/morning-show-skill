@@ -13,6 +13,81 @@ warn()  { echo -e "${YELLOW}[!]${RESET} $*" >&2; }
 err()   { echo -e "${RED}[✗]${RESET} $*" >&2; }
 info()  { echo -e "${CYAN}[i]${RESET} $*" >&2; }
 
+# --- Paths (resolved relative to this script) ---
+SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
+SCRIPT_DIR_SELF="$(dirname "$SCRIPT_PATH")"
+MORNING_SHOW_ROOT="$(cd "$SCRIPT_DIR_SELF/.." && pwd)"
+
+# --- LUFS delta logging (Wave 3 Task 17, Q2.2=c) ----------------------------
+# We measure the music library's median LUFS for reference and log the delta
+# from our hardcoded -16 LUFS production target. This is OBSERVATION ONLY —
+# the production loudnorm filter below stays at I=-16 per Q2.2=c. The delta
+# is reviewed periodically to decide whether to switch targets in v1.x.
+log_lufs_delta() {
+  local target_lufs="-16"
+  local lufs_json="${LIBRARY_LUFS_PATH_OVERRIDE:-$MORNING_SHOW_ROOT/references/library-lufs.json}"
+  local traces_path="${TRACES_PATH_OVERRIDE:-$MORNING_SHOW_ROOT/.planning/TRACES.md}"
+  local show_date="${SHOW_DATE_OVERRIDE:-$(date -u +%Y-%m-%d)}"
+  local timestamp
+  timestamp="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+
+  # Ensure the TRACES.md parent directory exists; create the file if missing.
+  mkdir -p "$(dirname "$traces_path")"
+  if [[ ! -f "$traces_path" ]]; then
+    {
+      echo "# Execution Traces: morning-show"
+      echo
+      echo "> Captured by Jarvis Development Methodology"
+      echo
+    } > "$traces_path"
+  fi
+
+  local console_line
+  local trace_line
+
+  if [[ ! -f "$lufs_json" ]]; then
+    console_line="[LUFS delta: library-lufs.json not found, delta unknown — run measure-library-lufs.sh]"
+    trace_line="| $timestamp | $show_date | LUFS delta | library-lufs.json not found, delta unknown |"
+    warn "$console_line"
+    echo "$trace_line" >> "$traces_path"
+    return 0
+  fi
+
+  # Validate JSON + extract median_lufs. jq returns "null" for missing keys.
+  local median_lufs=""
+  if command -v jq &>/dev/null; then
+    median_lufs="$(jq -r '.median_lufs // empty' "$lufs_json" 2>/dev/null || true)"
+  fi
+
+  if [[ -z "$median_lufs" || "$median_lufs" == "null" ]]; then
+    console_line="[LUFS delta: library-lufs.json not found, delta unknown — malformed or missing median_lufs]"
+    trace_line="| $timestamp | $show_date | LUFS delta | library-lufs.json not found, delta unknown (malformed) |"
+    warn "$console_line"
+    echo "$trace_line" >> "$traces_path"
+    return 0
+  fi
+
+  # delta = target - library_median  (positive = target louder than library)
+  local delta
+  delta="$(awk -v t="$target_lufs" -v m="$median_lufs" 'BEGIN { printf "%+.1f", t - m }')"
+
+  console_line="[LUFS delta: target ${target_lufs}, library median ${median_lufs}, delta ${delta} LU]"
+  trace_line="| $timestamp | $show_date | LUFS delta | target=${target_lufs} library_median=${median_lufs} delta=${delta} LU |"
+
+  info "$console_line"
+  echo "$trace_line" >> "$traces_path"
+  return 0
+}
+
+# Always log the LUFS delta at the start of an invocation so we have a trace
+# for every show build (and for the stub mode below).
+log_lufs_delta
+
+# Stub mode: log delta + exit. Used by test harness so we don't need fixtures.
+if [[ "${PRODUCE_HOUR_LUFS_DELTA_ONLY:-0}" == "1" ]]; then
+  exit 0
+fi
+
 usage() {
   cat <<'EOF'
 Usage: produce-hour.sh [OPTIONS]

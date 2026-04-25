@@ -17,3 +17,4 @@
 
 ### Human Verification
 <!-- TODO: Fixes needed after human walkthrough -->
+| 2026-04-25T06:51:55Z | 2026-04-25 | LUFS delta | library-lufs.json not found, delta unknown |
