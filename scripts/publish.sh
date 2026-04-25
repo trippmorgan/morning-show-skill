@@ -1,23 +1,35 @@
 #!/usr/bin/env bash
 # publish.sh — Morning Show Publisher for PlayoutONE Standard
 #
-# Version: 0.6.0 — 2026-04-25 (Wave 3 / Task 21: typed-deploy gate)
+# Version: 0.7.0 — 2026-04-25 (Wave 3.5: --publish-mode sql-direct mimics Music1)
 #
-# Flow (v5 — pre-analyze markers OURSELVES; never trust AutoImporter):
+# Flow (v6 — sql-direct default; mimics Music1's ODBC path; file-drop fallback):
 #   1. Pre-flight checks
 #   2. Upload audio files to station C:\temp\
 #  2.5 Pre-analyze each segment with preanalyze-segment.sh (length/trim/extro)
 #       — abort on Extro=0, abort if preanalyze script missing.
 #   3. Copy to F:\PlayoutONE\Audio\ as UID-named files (MUST match Audio.Filename exactly)
-#   4. Register in Audio table with PRE-ANALYZED markers, then SELECT them back
-#       and verify within 1ms tolerance — abort on mismatch (March 30 lesson:
-#       AutoImporter silently zero'd TrimOut/Extro on >30-min files → instant
-#       skip crash loop). All marker writes are logged to mutations.jsonl.
-#   5. Wait for Music1 to finish its run
-#   6. DELETE existing Playlists entries for target hours + remove old DPLs
-#   7. Generate DPL files (15-col music / 9-col SOFTMARKER per re-audit 2b10202)
-#   8. Drop DPL files into F:\PlayoutONE\Import\Music Logs\
-#   9. Wait for AutoImporter (~15 seconds) and verify Playlists rows
+#       Then UPDATE Audio with PRE-ANALYZED markers + SELECT-back verify (1ms tolerance).
+#       (March 30 lesson: AutoImporter silently zero'd TrimOut/Extro on >30-min
+#       files → instant skip crash loop. All marker writes go to mutations.jsonl.)
+#  3c. Typed-deploy gate (Wave 3 / Task 21).
+#
+#   --- sql-direct branch (default, Wave 3.5) ----------------------------------
+#   4. Build planned INSERT statements (1 Playlists row per hour + 1 ScheduledLogs
+#       row patched to the show's date).
+#   5. Live-window guard + blast-radius assessment (refuse if >50 rows planned).
+#   6. Wrap INSERTs in BEGIN TRAN / COMMIT TRAN (rollback on partial failure).
+#       Mutation-log every INSERT (success | rollback | drift).
+#   7. Verify SELECT COUNT(*) per hour-range matches expected = abort on mismatch.
+#   --- file-drop branch (legacy, --publish-mode file-drop) --------------------
+#   4f. Wait for Music1 to finish its run
+#   5f. DELETE existing Playlists entries for target hours + remove old DPLs
+#   6f. Generate DPL files (15-col music / 9-col SOFTMARKER per re-audit 2b10202)
+#   7f. Drop DPL files into F:\PlayoutONE\Import\Music Logs\
+#   8f. Wait for AutoImporter (~15 seconds) and verify Playlists rows
+#       (Caveat 2026-04-24: AutoImporter "MusicONE and TrafficONE" job has been
+#       dormant since 2019. Use --publish-mode file-drop only as a fallback;
+#       sql-direct is the supported path going forward.)
 #
 # CRITICAL RULES (2026-03-30 incident learnings):
 #   - Audio.Filename MUST exactly match the file on disk — PlayoutONE silently skips if not found
@@ -26,9 +38,9 @@
 #   - Extro=0 is fatal — publish aborts rather than ever writing Extro=0 to the Audio table.
 #   - After every marker write we SELECT back the row and verify the values match
 #     within 1ms; mismatch aborts the run.
-#   - AutoImporter first-import-wins — DELETE Playlists entries + remove old DPL before dropping new one
-#   - Music1 can overwrite custom DPLs — our DPL must be dropped AFTER Music1 finishes its run
-#   - Drop path: F:\PlayoutONE\Import\Music Logs\ (NOT C:\PlayoutONE\data\playlists\)
+#   - sql-direct: wrap INSERTs in a transaction. Verify count post-commit. Rollback on mismatch.
+#   - file-drop legacy: AutoImporter first-import-wins — DELETE Playlists entries + remove old DPL before dropping new one
+#   - file-drop legacy: Music1 can overwrite custom DPLs — our DPL must be dropped AFTER Music1 finishes its run
 #   - Publish at least 30 min before target hour
 #
 # Test/dev hooks (env vars; never set in production):
@@ -38,6 +50,16 @@
 #                                 mock is invoked as:
 #                                   $MOCK update <uid> <length> <trim_out> <extro>
 #                                   $MOCK select <uid>      → echoes "<trim_out>\t<extro>"
+#   PUBLISH_PLAYLISTS_SQL_MOCK=PATH replace the Playlists+ScheduledLogs SQL path
+#                                 (sql-direct mode). Invocations:
+#                                   $MOCK insert_playlists  <gindex> <name> <airtime> <uid> <title> <artist> <length> <order>
+#                                   $MOCK insert_scheduledlogs <name> <realdate> <hours_csv>
+#                                   $MOCK begin
+#                                   $MOCK commit
+#                                   $MOCK rollback
+#                                   $MOCK count_for_range <gindex_lo> <gindex_hi>  → echoes integer
+#   PUBLISH_LIVE_WINDOW_OK=1     skip live-window check (test only)
+#   PUBLISH_BLAST_RADIUS_LIMIT=N override the hard refuse threshold (default 50)
 #
 set -euo pipefail
 
@@ -61,7 +83,10 @@ Options:
   --hours '5,6,7,8'      Comma-separated hours to publish (default: 5,6,7,8)
   --audio-dir <dir>      Directory containing MORNING-SHOW-H{N}.mp3 files (required)
   --config <yaml>        Config file path (default: ../config.yaml)
-  --skip-music1-wait     Skip the Music1 run check (use only if Music1 won't run for this date)
+  --publish-mode <mode>  sql-direct (default; mimics Music1's ODBC path) or
+                         file-drop (legacy AutoImporter pipeline; broken since 2019).
+  --skip-music1-wait     [file-drop only] Skip the Music1 run check
+                         (use only if Music1 won't run for this date)
   --auto-approve         Skip the typed-deploy approval gate (required for
                          non-interactive runs: multi-day, dogfood, scheduled cron)
   --dry-run              Show all commands without executing
@@ -104,6 +129,7 @@ cfg_val() {
 
 # --- Defaults ---
 DATE=""; HOURS="5,6,7,8"; AUDIO_DIR=""; CONFIG=""
+PUBLISH_MODE="sql-direct"   # Wave 3.5 default
 DRY_RUN=false; SKIP_MUSIC1_WAIT=false; AUTO_APPROVE=false
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DEFAULT_CONFIG="${SCRIPT_DIR}/../config.yaml"
@@ -115,6 +141,7 @@ while [[ $# -gt 0 ]]; do
     --hours)            HOURS="$2";     shift 2 ;;
     --audio-dir)        AUDIO_DIR="$2"; shift 2 ;;
     --config)           CONFIG="$2";    shift 2 ;;
+    --publish-mode)     PUBLISH_MODE="$2"; shift 2 ;;
     --skip-music1-wait) SKIP_MUSIC1_WAIT=true; shift ;;
     --auto-approve)     AUTO_APPROVE=true; shift ;;
     --dry-run)          DRY_RUN=true;   shift   ;;
@@ -122,6 +149,11 @@ while [[ $# -gt 0 ]]; do
     *) err "Unknown option: $1"; exit 1 ;;
   esac
 done
+
+case "$PUBLISH_MODE" in
+  sql-direct|file-drop) ;;
+  *) err "Invalid --publish-mode: $PUBLISH_MODE (expected sql-direct|file-drop)"; exit 1 ;;
+esac
 
 # Env-var dry-run hook (test harness friendlier than --dry-run)
 if [[ "${PUBLISH_DRY_RUN:-0}" == "1" ]]; then
@@ -590,6 +622,280 @@ if ! deploy_gate "$DATE"; then
   err "  No DPL was dropped. No Playlists rows were touched."
   exit 1
 fi
+
+# ============================================================
+# Branch on --publish-mode
+#   sql-direct (default, Wave 3.5) — mimics Music1's ODBC INSERT path.
+#   file-drop  (legacy)            — drops DPL files for AutoImporter (broken
+#                                    since 2019; kept as fallback only).
+# ============================================================
+if [[ "$PUBLISH_MODE" == "sql-direct" ]]; then
+
+# ============================================================
+# Step 4 (sql-direct): Build planned INSERT statements
+# ============================================================
+step "4/7  [sql-direct] Build planned INSERT statements (Playlists + ScheduledLogs)"
+
+# UUID generator. Prefer uuidgen when present; fall back to /proc/sys/kernel/random/uuid.
+_pub_uuid() {
+  if command -v uuidgen >/dev/null 2>&1; then
+    uuidgen | tr '[:lower:]' '[:upper:]'
+  else
+    cat /proc/sys/kernel/random/uuid 2>/dev/null | tr '[:lower:]' '[:upper:]' \
+      || printf 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX'
+  fi
+}
+
+# SQL string-literal escape — doubles single-quotes per T-SQL convention.
+_pub_sqlesc() {
+  local s="${1:-}"
+  printf '%s' "${s//\'/\'\'}"
+}
+
+# Plan one row per hour. Arrays parallel-indexed by HOUR_LIST position.
+declare -a PLAN_GINDEX=() PLAN_NAME=() PLAN_AIRTIME=() PLAN_UID=()
+declare -a PLAN_TITLE=() PLAN_ARTIST=() PLAN_LENGTH=() PLAN_ORDER=() PLAN_GUID=()
+
+for h in "${HOUR_LIST[@]}"; do
+  hh=$(printf '%02d' "$h")
+  uid="9000${h}"
+  dpl_name="${DATE_COMPACT}${hh}.dpl"
+  airtime="${hh}:00:00"
+  title="Morning Show Hour ${h}"
+  artist="Dr Johnny Fever"
+  length_ms="${PRE_LENGTH[$h]}"
+  order="1"                                   # Order=0 reserved for START marker
+  gindex="${DATE_COMPACT}${hh}.0001"          # YYYYMMDDHH.NNNN — segment 1
+  guid="$(_pub_uuid)"
+
+  PLAN_GINDEX+=("$gindex")
+  PLAN_NAME+=("$dpl_name")
+  PLAN_AIRTIME+=("$airtime")
+  PLAN_UID+=("$uid")
+  PLAN_TITLE+=("$title")
+  PLAN_ARTIST+=("$artist")
+  PLAN_LENGTH+=("$length_ms")
+  PLAN_ORDER+=("$order")
+  PLAN_GUID+=("$guid")
+
+  log "  Planned Playlists row: GIndex=${gindex} Name=${dpl_name} UID=${uid} Length=${length_ms}ms"
+done
+
+# ScheduledLogs row — day-level, name = YYYYMMDD.dpl, RealDate = the show date.
+SL_NAME="${DATE_COMPACT}.dpl"
+SL_REALDATE="${DATE} 00:00:00"
+# Build the 24 hour-flag values: '1' for hours we publish, '0' otherwise.
+SL_HOUR_FLAGS=()
+for ((__h=0; __h<24; __h++)); do
+  __present=0
+  for hh_check in "${HOUR_LIST[@]}"; do
+    if (( __h == hh_check )); then __present=1; break; fi
+  done
+  if (( __present )); then SL_HOUR_FLAGS+=("1"); else SL_HOUR_FLAGS+=("0"); fi
+done
+log "  Planned ScheduledLogs row: Name=${SL_NAME} RealDate=${SL_REALDATE} hours=${HOURS}"
+
+PLAN_ROW_COUNT=$((${#PLAN_GINDEX[@]} + 1))   # Playlists rows + 1 ScheduledLogs row
+
+# Pretty-print the planned INSERTs (always — both real and dry-run runs benefit).
+echo "" >&2
+info "Planned SQL (${PLAN_ROW_COUNT} rows total):"
+for ((i=0; i<${#PLAN_GINDEX[@]}; i++)); do
+  cat >&2 <<EOF
+  INSERT INTO Playlists (GIndex, AirTime, Name, [Order], UID, Title, Artist, Chain, Length, Type, Category, GUID, Deleted, MissingAudio)
+  VALUES (${PLAN_GINDEX[$i]}, '${PLAN_AIRTIME[$i]}', '${PLAN_NAME[$i]}', ${PLAN_ORDER[$i]}, '${PLAN_UID[$i]}', '$(_pub_sqlesc "${PLAN_TITLE[$i]}")', '$(_pub_sqlesc "${PLAN_ARTIST[$i]}")', 1, ${PLAN_LENGTH[$i]}, 16, 0, '${PLAN_GUID[$i]}', 0, 0);
+EOF
+done
+__sl_csv="$(IFS=,; echo "${SL_HOUR_FLAGS[*]}")"
+cat >&2 <<EOF
+  -- ScheduledLogs (insert if not exists)
+  IF NOT EXISTS (SELECT 1 FROM ScheduledLogs WHERE Name='${SL_NAME}')
+    INSERT INTO ScheduledLogs (Name, RealDate, [00],[01],[02],[03],[04],[05],[06],[07],[08],[09],[10],[11],[12],[13],[14],[15],[16],[17],[18],[19],[20],[21],[22],[23])
+    VALUES ('${SL_NAME}', '${SL_REALDATE}', ${__sl_csv//,/, });
+EOF
+
+# ============================================================
+# Step 5 (sql-direct): Live-window guard + blast-radius check
+# ============================================================
+step "5/7  [sql-direct] Safety: live-window + blast-radius guards"
+
+# Hard refuse cap (default 50; 4-hour show plans 5 rows).
+__br_limit="${PUBLISH_BLAST_RADIUS_LIMIT:-50}"
+if (( PLAN_ROW_COUNT > __br_limit )); then
+  err "Blast-radius refuse: planning ${PLAN_ROW_COUNT} rows (> limit ${__br_limit})."
+  err "  Refusing to publish — sanity guard against scope explosion."
+  exit 1
+fi
+log "  Blast radius OK: ${PLAN_ROW_COUNT}/${__br_limit} rows planned"
+
+# Live-window check — block if a live show is on the air.
+if [[ "${PUBLISH_LIVE_WINDOW_OK:-0}" == "1" ]]; then
+  info "  Live-window check skipped (PUBLISH_LIVE_WINDOW_OK=1)"
+elif [[ "$DRY_RUN" == true ]]; then
+  info "  [dry-run] Would check live-window via _shared/check-live-window.sh"
+else
+  __clw="/home/tripp/.openclaw/workspace/openclaw-pretoria/_shared/check-live-window.sh"
+  if [[ -r "$__clw" ]]; then
+    # Source-and-call so we get exit codes back as a function return.
+    # shellcheck disable=SC1090
+    ( source "$__clw" && check_live_window )
+    __clw_rc=$?
+    # check_live_window returns 0 = LIVE (block), 1 = CLEAR (allow).
+    if (( __clw_rc == 0 )); then
+      err "Live-window guard BLOCKED publish — a live show is on the air."
+      err "  Set OVERRIDE_REASON='...' to bypass (audited)."
+      exit 1
+    fi
+    log "  Live-window CLEAR — proceeding"
+  else
+    warn "  Live-window helper missing at $__clw — proceeding without check"
+  fi
+fi
+
+# ============================================================
+# Step 6 (sql-direct): Wrap INSERTs in BEGIN TRAN / COMMIT TRAN
+# ============================================================
+step "6/7  [sql-direct] Execute INSERTs in transaction (with mutation log)"
+
+# playlists_sql_call <verb> <args...> — dispatch to mock or real backend.
+playlists_sql_call() {
+  local verb="$1"; shift
+  if [[ -n "${PUBLISH_PLAYLISTS_SQL_MOCK:-}" ]]; then
+    if [[ "$DRY_RUN" == true ]]; then
+      info "[dry-run] $PUBLISH_PLAYLISTS_SQL_MOCK $verb $*"
+      return 0
+    fi
+    "$PUBLISH_PLAYLISTS_SQL_MOCK" "$verb" "$@"
+    return $?
+  fi
+  # Production backend not implemented in v0.7.0 — sql-direct production cutover
+  # is gated on Wave 4 dogfood. Until then, the MOCK env-var must be set.
+  err "PUBLISH_PLAYLISTS_SQL_MOCK not set and no production sql-direct backend yet."
+  err "  Set PUBLISH_PLAYLISTS_SQL_MOCK=<path> to dispatch INSERTs, or use --publish-mode file-drop."
+  return 1
+}
+
+if [[ "$DRY_RUN" == true ]]; then
+  info "[dry-run] Would BEGIN TRAN, run ${PLAN_ROW_COUNT} INSERTs, COMMIT or ROLLBACK"
+  info "[dry-run] Would log mutation rows to mutations.jsonl (one per INSERT)"
+else
+  # Begin transaction
+  if ! playlists_sql_call begin; then
+    err "BEGIN TRAN failed — aborting before any rows touched."
+    exit 1
+  fi
+  log "  BEGIN TRAN issued"
+
+  __any_failed=0
+  declare -a __mutation_ids=()
+
+  # Insert Playlists rows
+  for ((i=0; i<${#PLAN_GINDEX[@]}; i++)); do
+    __planned_post=$(printf '{"gindex":"%s","name":"%s","airtime":"%s","uid":"%s","title":"%s","artist":"%s","length":%d,"order":%s}' \
+      "${PLAN_GINDEX[$i]}" "${PLAN_NAME[$i]}" "${PLAN_AIRTIME[$i]}" "${PLAN_UID[$i]}" \
+      "$(_pub_sqlesc "${PLAN_TITLE[$i]}")" "$(_pub_sqlesc "${PLAN_ARTIST[$i]}")" \
+      "${PLAN_LENGTH[$i]}" "${PLAN_ORDER[$i]}")
+    __rb_sql="DELETE FROM Playlists WHERE GIndex=${PLAN_GINDEX[$i]} AND UID='${PLAN_UID[$i]}'"
+    __mid=$(log_mutation_start "publish.sh" "morning-show-publish-sql-direct" \
+      "Playlists:GIndex=${PLAN_GINDEX[$i]}" "null" "$__planned_post" "$__rb_sql" 2>/dev/null || echo "")
+    __mutation_ids+=("$__mid")
+
+    if ! playlists_sql_call insert_playlists \
+        "${PLAN_GINDEX[$i]}" "${PLAN_NAME[$i]}" "${PLAN_AIRTIME[$i]}" "${PLAN_UID[$i]}" \
+        "${PLAN_TITLE[$i]}" "${PLAN_ARTIST[$i]}" "${PLAN_LENGTH[$i]}" "${PLAN_ORDER[$i]}" \
+        "${PLAN_GUID[$i]}"; then
+      err "INSERT FAILED on Playlists row ${i} (GIndex=${PLAN_GINDEX[$i]})"
+      [[ -n "$__mid" ]] && log_mutation_complete "$__mid" "null" "failure" >/dev/null 2>&1 || true
+      __any_failed=1
+      break
+    fi
+    [[ -n "$__mid" ]] && log_mutation_complete "$__mid" "$__planned_post" "success" >/dev/null 2>&1 || true
+    log "  ✅ INSERTed Playlists row ${i}: GIndex=${PLAN_GINDEX[$i]} UID=${PLAN_UID[$i]}"
+  done
+
+  # Insert ScheduledLogs row (only if Playlists succeeded)
+  if (( __any_failed == 0 )); then
+    __sl_planned=$(printf '{"name":"%s","realdate":"%s","hours":"%s"}' \
+      "$SL_NAME" "$SL_REALDATE" "$__sl_csv")
+    __sl_rb="DELETE FROM ScheduledLogs WHERE Name='${SL_NAME}'"
+    __sl_mid=$(log_mutation_start "publish.sh" "morning-show-publish-sql-direct" \
+      "ScheduledLogs:Name=${SL_NAME}" "null" "$__sl_planned" "$__sl_rb" 2>/dev/null || echo "")
+
+    if ! playlists_sql_call insert_scheduledlogs "$SL_NAME" "$SL_REALDATE" "$__sl_csv"; then
+      err "INSERT FAILED on ScheduledLogs row (Name=${SL_NAME})"
+      [[ -n "$__sl_mid" ]] && log_mutation_complete "$__sl_mid" "null" "failure" >/dev/null 2>&1 || true
+      __any_failed=1
+    else
+      [[ -n "$__sl_mid" ]] && log_mutation_complete "$__sl_mid" "$__sl_planned" "success" >/dev/null 2>&1 || true
+      log "  ✅ INSERTed ScheduledLogs row: Name=${SL_NAME}"
+    fi
+  fi
+
+  if (( __any_failed != 0 )); then
+    err "ROLLBACK transaction — at least one INSERT failed."
+    playlists_sql_call rollback || warn "  ROLLBACK call also failed — manual cleanup required."
+    # Mark every previously-completed-success mutation as rollback for audit.
+    for __mid in "${__mutation_ids[@]}"; do
+      [[ -n "$__mid" ]] && log_mutation_rollback "$__mid" "rolled-back-with-tran" >/dev/null 2>&1 || true
+    done
+    err "Aborting publish for ${DATE} — no rows persisted."
+    exit 1
+  fi
+
+  # Commit
+  if ! playlists_sql_call commit; then
+    err "COMMIT TRAN failed — attempting ROLLBACK."
+    playlists_sql_call rollback || warn "  ROLLBACK call also failed."
+    for __mid in "${__mutation_ids[@]}"; do
+      [[ -n "$__mid" ]] && log_mutation_rollback "$__mid" "commit-failed" >/dev/null 2>&1 || true
+    done
+    exit 1
+  fi
+  log "  COMMIT TRAN issued — ${PLAN_ROW_COUNT} rows persisted"
+fi
+
+# ============================================================
+# Step 7 (sql-direct): Verification — count rows in target ranges
+# ============================================================
+step "7/7  [sql-direct] Verify INSERT counts via SELECT COUNT(*)"
+
+if [[ "$DRY_RUN" == true ]]; then
+  info "[dry-run] Would verify ${PLAN_ROW_COUNT} rows present (1 per hour + 1 day-log)"
+  log "Dry run complete — no SQL was executed"
+else
+  __verify_failed=0
+  for ((i=0; i<${#PLAN_GINDEX[@]}; i++)); do
+    # Each hour-row should be exactly 1 in the half-open hour range.
+    g_lo="${PLAN_GINDEX[$i]%.*}.0001"
+    g_hi="${PLAN_GINDEX[$i]%.*}.9999"
+    __got=$(playlists_sql_call count_for_range "$g_lo" "$g_hi" 2>/dev/null \
+            | tr -d '\r\n ' | head -c 16)
+    if [[ "$__got" == "1" ]]; then
+      log "  ✅ Verified GIndex range ${g_lo}..${g_hi}: 1 row present"
+    else
+      err "  ❌ Verification mismatch GIndex range ${g_lo}..${g_hi}: expected 1, got '${__got}'"
+      __verify_failed=1
+    fi
+  done
+
+  if (( __verify_failed != 0 )); then
+    err "Verification FAILED — counts do not match plan. Triggering ROLLBACK contingency."
+    err "  (Note: rows have already been COMMITted; this is a logged drift event."
+    err "   Operator must reconcile manually using the mutation log.)"
+    for __mid in "${__mutation_ids[@]}"; do
+      [[ -n "$__mid" ]] && log_mutation_complete "$__mid" "null" "drift" >/dev/null 2>&1 || true
+    done
+    exit 1
+  fi
+
+  log "✅ Publish complete — ${PLAN_ROW_COUNT} rows verified for ${DATE} hours: ${HOURS}"
+fi
+
+echo "" >&2
+echo -e "${GREEN}${BOLD}Morning show publish for ${DATE} — done (sql-direct)${RESET}" >&2
+exit 0
+
+fi  # END sql-direct branch — file-drop legacy path follows.
 
 # ============================================================
 # Step 4: Wait for Music1 to finish (prevent Music1 overwriting our DPLs)

@@ -126,7 +126,8 @@ run_publish_for_date() {
     return $?
 }
 
-GATE_MARKER='Drop DPL files'   # Step 6 banner; we expect to see it iff gate passed
+GATE_MARKER='Drop DPL files'   # Step 6 banner (file-drop legacy)
+SQL_GATE_MARKER='sql-direct'    # Step 4-7 [sql-direct] banner (Wave 3.5 default)
 ABORT_MARKER='deploy gate'      # Substring used in our gate-abort messages
 
 # ---------------------------------------------------------------------------
@@ -141,8 +142,8 @@ out="$(run_publish_for_date 2026-04-27)"; rc=$?
 
 if (( rc != 0 )); then
     fail "Test 1: publish should succeed with correct phrase" "rc=$rc; out:\n$out"
-elif ! echo "$out" | grep -qiE "$GATE_MARKER|Generate.*DPL|Drop.*DPL"; then
-    fail "Test 1: publish must reach Step 6 after correct phrase" "out:\n$out"
+elif ! echo "$out" | grep -qiE "$GATE_MARKER|Generate.*DPL|Drop.*DPL|$SQL_GATE_MARKER"; then
+    fail "Test 1: publish must reach post-gate steps after correct phrase" "out:\n$out"
 elif echo "$out" | grep -qiE "$ABORT_MARKER.*abort|gate.*abort"; then
     fail "Test 1: publish must NOT abort the gate when phrase is correct" "out:\n$out"
 else

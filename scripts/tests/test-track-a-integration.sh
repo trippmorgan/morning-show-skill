@@ -270,17 +270,33 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-# Assertion 2: Audio table SQL writes are well-formed.
-# In --dry-run publish prints the planned UPDATE statement (does not invoke
-# the SQL mock). We grep for the canonical shape with non-zero TrimOut/Extro.
+# Assertion 2: Audio table SQL writes AND Playlists INSERTs are well-formed.
+# In --dry-run publish prints the planned UPDATE statement (Audio markers,
+# Wave 3 Task 15) AND the planned INSERT INTO Playlists statements
+# (Wave 3.5 sql-direct). Both must be present and well-formed.
 # ---------------------------------------------------------------------------
+__a2_audio_ok=false
+__a2_playlists_ok=false
 if grep -qE 'UPDATE +Audio +SET +Length=600000, *TrimOut=600000, *Extro=595000 +WHERE +UID' "$A1_LOG"; then
-    pass "2. UPDATE Audio statement well-formed (Length/TrimOut/Extro all non-zero)"
+    __a2_audio_ok=true
 elif grep -qE "UPDATE +Audio +SET" "$A1_LOG" && grep -qE 'Extro=[1-9]' "$A1_LOG"; then
-    pass "2. UPDATE Audio statement present with non-zero Extro (loose match)"
-else
+    __a2_audio_ok=true
+fi
+if grep -qE 'INSERT INTO Playlists.*GIndex.*AirTime.*Name.*UID.*Title.*Artist.*Length' "$A1_LOG"; then
+    __a2_playlists_ok=true
+fi
+
+if $__a2_audio_ok && $__a2_playlists_ok; then
+    pass "2. UPDATE Audio + INSERT INTO Playlists statements both well-formed"
+elif $__a2_audio_ok; then
+    fail "2. INSERT INTO Playlists statements missing (sql-direct path)" \
+         "Audio UPDATE OK, but no Playlists INSERT in:\n$(grep -E 'INSERT|Playlists' "$A1_LOG" | head -10)"
+elif $__a2_playlists_ok; then
     fail "2. UPDATE Audio statement missing or has zero Extro" \
-         "expected 'UPDATE Audio SET Length=...TrimOut=...Extro=595000 WHERE UID' in:\n$(grep -E 'UPDATE|Extro' "$A1_LOG" | head -10)"
+         "Playlists INSERT OK, but no Audio UPDATE in:\n$(grep -E 'UPDATE|Extro' "$A1_LOG" | head -10)"
+else
+    fail "2. UPDATE Audio + INSERT INTO Playlists both missing" \
+         "expected both in dry-run output. tail:\n$(tail -30 "$A1_LOG")"
 fi
 
 # ---------------------------------------------------------------------------
@@ -507,6 +523,54 @@ else
          "missing '--date <d> --auto-approve' for: $A10_BAD"
 fi
 
+echo
+echo "$(cyan '-- SQL-direct publish path assertions (11) --')"
+
+# ---------------------------------------------------------------------------
+# Assertion 11: SQL-direct publish path (Wave 3.5 default) produces
+# well-formed Playlists INSERTs in dry-run, not file-drop DPL output.
+# Run publish.sh with the explicit --publish-mode sql-direct and verify
+# both the planned INSERT INTO Playlists and INSERT INTO ScheduledLogs
+# (or the IF NOT EXISTS guard for it) appear, and that the file-drop
+# legacy "Drop DPL files" / "Generate and drop DPL files" banner does NOT.
+# ---------------------------------------------------------------------------
+A11_LOG="$TMPDIR_T22/a11-publish-sqldirect.log"
+set +e
+PUBLISH_PREANALYZE_MOCK="$MOCK_PRE" \
+PUBLISH_SQL_MOCK="$MOCK_SQL" \
+PUBLISH_LIVE_WINDOW_OK=1 \
+"$PUBLISH" --date "$TEST_DATE" --hours '5,6,7,8' --audio-dir "$AUDIO_DIR" \
+    --config "$CONFIG" --publish-mode sql-direct --auto-approve --dry-run \
+    >"$A11_LOG" 2>&1
+A11_RC=$?
+set -e
+
+A11_PL_COUNT=$(grep -cE "INSERT INTO Playlists" "$A11_LOG" || true)
+A11_HAS_SL=false
+if grep -qE "INSERT INTO ScheduledLogs|IF NOT EXISTS .*ScheduledLogs" "$A11_LOG"; then
+    A11_HAS_SL=true
+fi
+A11_HAS_DPL_DROP=false
+if grep -qE "Drop DPL files|Generate and drop DPL files|F:\\\\PlayoutONE\\\\Import\\\\Music Logs" "$A11_LOG"; then
+    A11_HAS_DPL_DROP=true
+fi
+
+if (( A11_RC != 0 )); then
+    fail "11. sql-direct publish dry-run rc!=0" \
+         "rc=$A11_RC; tail:\n$(tail -20 "$A11_LOG")"
+elif (( A11_PL_COUNT < 4 )); then
+    fail "11. sql-direct must plan >=4 INSERT INTO Playlists rows (4-hour show)" \
+         "got $A11_PL_COUNT; grep:\n$(grep -E 'INSERT|GIndex' "$A11_LOG" | head -10)"
+elif ! $A11_HAS_SL; then
+    fail "11. sql-direct must plan an INSERT INTO ScheduledLogs row" \
+         "tail:\n$(tail -20 "$A11_LOG")"
+elif $A11_HAS_DPL_DROP; then
+    fail "11. sql-direct must NOT drop DPL files (file-drop banner found)" \
+         "grep:\n$(grep -E 'Drop|Music Logs' "$A11_LOG" | head -5)"
+else
+    pass "11. sql-direct path produced ${A11_PL_COUNT} Playlists INSERTs + ScheduledLogs (no file-drop)"
+fi
+
 # ===========================================================================
 # Cleanup is via trap; nothing to do here.
 # ===========================================================================
@@ -518,7 +582,7 @@ echo
 echo "------------------------------------------------------------"
 echo "Runtime: ${T_ELAPSED}s"
 if (( FAIL == 0 )); then
-    echo "$(green 'TRACK A INTEGRATION: 10/10 PASS')"
+    echo "$(green 'TRACK A INTEGRATION: 11/11 PASS')"
     exit 0
 fi
 echo "$(red "TRACK A INTEGRATION: $PASS/$((PASS + FAIL)) PASS — $FAIL FAILED")"
