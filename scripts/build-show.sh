@@ -168,7 +168,11 @@ run_week() {
     fi
   done
 
-  # Print summary block to BOTH stdout (Telegram-friendly) and stderr (human log)
+  # Print summary block to BOTH stdout (Telegram-friendly) and stderr (human log).
+  # NOTE: was `{ ... } | tee /dev/stderr` but that truncates the script's
+  # stderr file when stderr is redirected (the new fd starts at offset 0,
+  # overwriting earlier content). Use process substitution to a cat >&2
+  # which inherits script's positioned fd 2 — preserves prior writes.
   {
     echo "Week build complete (${monday} → ${friday}):"
     for i in 0 1 2 3 4; do
@@ -178,7 +182,7 @@ run_week() {
       echo "${mark} ${WEEK_LABELS[$i]} ${WEEK_DATES[$i]}: ${WEEK_NOTE[$i]}"
     done
     echo "Total spend: \$${total_spend} (${total_built}/5 days complete)"
-  } | tee /dev/stderr
+  } | tee >(cat >&2)
 
   # Exit 0 unless ALL five days failed (graceful degradation).
   if (( total_built == 0 )); then
