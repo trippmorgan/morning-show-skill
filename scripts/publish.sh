@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # publish.sh — Morning Show Publisher for PlayoutONE Standard
 #
-# Version: 0.5.0 — 2026-04-25 (Wave 3 / Task 15: pre-analyzed markers)
+# Version: 0.6.0 — 2026-04-25 (Wave 3 / Task 21: typed-deploy gate)
 #
 # Flow (v5 — pre-analyze markers OURSELVES; never trust AutoImporter):
 #   1. Pre-flight checks
@@ -62,8 +62,17 @@ Options:
   --audio-dir <dir>      Directory containing MORNING-SHOW-H{N}.mp3 files (required)
   --config <yaml>        Config file path (default: ../config.yaml)
   --skip-music1-wait     Skip the Music1 run check (use only if Music1 won't run for this date)
+  --auto-approve         Skip the typed-deploy approval gate (required for
+                         non-interactive runs: multi-day, dogfood, scheduled cron)
   --dry-run              Show all commands without executing
   --help                 Show this help
+
+Approval gate (Wave 3 / Task 21):
+  Before any DPL drop, this script blocks waiting for the operator to type
+  the EXACT phrase (case-sensitive, full date match):
+      yes deploy <YYYY-MM-DD>
+  where <YYYY-MM-DD> matches --date. Mistakes re-prompt up to 3 times,
+  then abort. Idle timeout: 10 minutes. Pass --auto-approve to skip.
 
 Audio files expected:
   MORNING-SHOW-H5.mp3, MORNING-SHOW-H6.mp3, etc.
@@ -95,7 +104,7 @@ cfg_val() {
 
 # --- Defaults ---
 DATE=""; HOURS="5,6,7,8"; AUDIO_DIR=""; CONFIG=""
-DRY_RUN=false; SKIP_MUSIC1_WAIT=false
+DRY_RUN=false; SKIP_MUSIC1_WAIT=false; AUTO_APPROVE=false
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DEFAULT_CONFIG="${SCRIPT_DIR}/../config.yaml"
 
@@ -107,6 +116,7 @@ while [[ $# -gt 0 ]]; do
     --audio-dir)        AUDIO_DIR="$2"; shift 2 ;;
     --config)           CONFIG="$2";    shift 2 ;;
     --skip-music1-wait) SKIP_MUSIC1_WAIT=true; shift ;;
+    --auto-approve)     AUTO_APPROVE=true; shift ;;
     --dry-run)          DRY_RUN=true;   shift   ;;
     --help)             usage ;;
     *) err "Unknown option: $1"; exit 1 ;;
@@ -142,6 +152,23 @@ else
   log_mutation_rollback() { :; }
 fi
 
+# Source the telegram-format helper for extract_confirmation_phrase
+# (Wave 3 / Task 21 deploy gate). Falls back to a stub if missing.
+TGFMT_HELPER="/home/tripp/.openclaw/workspace/openclaw-pretoria/_shared/telegram-format.sh"
+if [[ -r "$TGFMT_HELPER" ]]; then
+  # shellcheck disable=SC1090
+  source "$TGFMT_HELPER"
+else
+  warn "telegram-format helper missing at $TGFMT_HELPER — using inline stub"
+  # Stub: trim whitespace, exact case-sensitive compare.
+  extract_confirmation_phrase() {
+    local reply="${1:-}" expected="${2:-}"
+    reply="${reply#"${reply%%[![:space:]]*}"}"
+    reply="${reply%"${reply##*[![:space:]]}"}"
+    [[ "$reply" == "$expected" ]]
+  }
+fi
+
 HOST=$(cfg_val host "$CONFIG")
 AUDIO_PATH=$(cfg_val audio_path "$CONFIG")   # F:\PlayoutONE\Audio
 TEMP_PATH=$(cfg_val temp_path "$CONFIG")     # C:\temp
@@ -160,6 +187,95 @@ IMPORTED_PATH='F:\PlayoutONE\Import\Music Logs\Imported'  # AutoImporter moves p
 
 run()     { [[ "$DRY_RUN" == true ]] && { info "[dry-run] $*"; return 0; }; eval "$@"; }
 run_ssh() { [[ "$DRY_RUN" == true ]] && { info "[dry-run] ssh $HOST $*"; return 0; }; ssh "$HOST" "$@"; }
+
+# ---------------------------------------------------------------------------
+# Wave 3 / Task 21: typed-deploy approval gate
+#
+# Before we drop a DPL into the AutoImporter folder, block waiting for the
+# operator to type the EXACT phrase (case-sensitive, full date match):
+#     yes deploy <YYYY-MM-DD>
+#
+# Up to 3 attempts. Idle timeout: PUBLISH_DEPLOY_TIMEOUT_SEC (default 600s).
+# --auto-approve bypasses the gate entirely (multi-day, dogfood, scheduled cron).
+#
+# Test hooks:
+#   PUBLISH_DEPLOY_INPUT          newline-separated attempts injected via heredoc
+#   PUBLISH_DEPLOY_TIMEOUT_SEC    override the per-attempt read timeout
+# ---------------------------------------------------------------------------
+deploy_gate() {
+  local show_date="$1"
+  local expected="yes deploy ${show_date}"
+  local timeout_sec="${PUBLISH_DEPLOY_TIMEOUT_SEC:-600}"
+  local max_attempts=3
+
+  if [[ "$AUTO_APPROVE" == true ]]; then
+    info "Deploy gate auto-approved (--auto-approve) — bypassed for ${show_date}"
+    return 0
+  fi
+
+  step "Deploy gate (Wave 3 / Task 21) — type the exact phrase to publish"
+  echo -e "${BOLD}${YELLOW}Required phrase (case-sensitive, exact):${RESET}" >&2
+  echo -e "    ${BOLD}${expected}${RESET}" >&2
+  echo "Up to ${max_attempts} attempts; idle timeout ${timeout_sec}s." >&2
+
+  # Source of attempts: PUBLISH_DEPLOY_INPUT (test) wins over interactive read.
+  local input_source=""
+  if [[ -n "${PUBLISH_DEPLOY_INPUT:-}" ]]; then
+    input_source="injected"
+  fi
+
+  local attempt=1
+  local reply=""
+  local read_rc=0
+  while (( attempt <= max_attempts )); do
+    if [[ "$input_source" == "injected" ]]; then
+      # Pop the next line out of PUBLISH_DEPLOY_INPUT.
+      reply="${PUBLISH_DEPLOY_INPUT%%$'\n'*}"
+      if [[ "$PUBLISH_DEPLOY_INPUT" == *$'\n'* ]]; then
+        PUBLISH_DEPLOY_INPUT="${PUBLISH_DEPLOY_INPUT#*$'\n'}"
+      else
+        PUBLISH_DEPLOY_INPUT=""
+      fi
+      read_rc=0
+      [[ -z "$reply" && -z "$PUBLISH_DEPLOY_INPUT" ]] && read_rc=1
+    else
+      # Interactive / piped stdin. -t enforces idle timeout.
+      reply=""
+      if read -r -t "$timeout_sec" reply; then
+        read_rc=0
+      else
+        read_rc=$?
+      fi
+    fi
+
+    # read returns >128 on timeout; 1 on EOF/no-input. Treat both as no-input.
+    if (( read_rc != 0 )); then
+      if (( read_rc > 128 )); then
+        err "Deploy gate timeout after ${timeout_sec}s of idle wait — aborting publish."
+      else
+        err "Deploy gate received no input (EOF) — idle timeout aborting publish."
+      fi
+      err "  (no phrase entered; required: ${expected})"
+      return 1
+    fi
+
+    if extract_confirmation_phrase "$reply" "$expected" 2>/dev/null; then
+      log "  ✅ Deploy gate cleared (phrase matched, attempt ${attempt}/${max_attempts})"
+      return 0
+    fi
+
+    if (( attempt < max_attempts )); then
+      warn "Phrase mismatch (attempt ${attempt}/${max_attempts}). Required EXACTLY:"
+      warn "    ${expected}"
+      warn "Try again:"
+    fi
+    attempt=$(( attempt + 1 ))
+  done
+
+  err "Deploy gate aborting after ${max_attempts} attempts — phrase never matched."
+  err "  Required EXACTLY (case-sensitive): ${expected}"
+  return 1
+}
 
 # ---------------------------------------------------------------------------
 # Audio-table marker SQL helpers
@@ -462,6 +578,18 @@ ${AUDIO_SQL}
 '@; \$sql | Set-Content -Path '${REMOTE_SQL}' -Encoding UTF8\""
   run_ssh "sqlcmd -S localhost -d ${DB} -E -i '${REMOTE_SQL}'"
 done
+
+# ============================================================
+# Step 3c: 3rd approval gate — typed-deploy phrase (Wave 3 / Task 21)
+# Per Q3.3=b + Q6.3=c. The previous two gates (scripts, preview) ran in
+# build-show.sh; this is the LAST chance to abort before AutoImporter sees
+# our DPL. Mandatory unless --auto-approve was passed.
+# ============================================================
+if ! deploy_gate "$DATE"; then
+  err "Deploy gate not satisfied — aborting publish for ${DATE}."
+  err "  No DPL was dropped. No Playlists rows were touched."
+  exit 1
+fi
 
 # ============================================================
 # Step 4: Wait for Music1 to finish (prevent Music1 overwriting our DPLs)

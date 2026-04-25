@@ -170,8 +170,10 @@ MOCK
 # ---------------------------------------------------------------------------
 run_publish() {
     # Return combined stdout+stderr; never let publish.sh kill the test runner.
+    # --auto-approve bypasses the Wave 3 / Task 21 deploy gate (orthogonal to
+    # what these tests cover; gate has its own dedicated test suite).
     "$PUBLISH" --date 2026-04-06 --hours '5' --audio-dir "$AUDIO_DIR" \
-        --config "$CONFIG" --skip-music1-wait --dry-run 2>&1
+        --config "$CONFIG" --skip-music1-wait --auto-approve --dry-run 2>&1
     return $?
 }
 
@@ -279,8 +281,10 @@ SHIM
 chmod +x "$SHIM_DIR/ssh" "$SHIM_DIR/scp"
 
 run_publish_no_dry() {
+    # --auto-approve bypasses the Wave 3 / Task 21 deploy gate.
     PATH="$SHIM_DIR:$PATH" "$PUBLISH" --date 2026-04-06 --hours '5' \
-        --audio-dir "$AUDIO_DIR" --config "$CONFIG" --skip-music1-wait 2>&1
+        --audio-dir "$AUDIO_DIR" --config "$CONFIG" --skip-music1-wait \
+        --auto-approve 2>&1
 }
 
 unset_publish_env
